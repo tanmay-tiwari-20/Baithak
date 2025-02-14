@@ -13,7 +13,7 @@ interface MeetingPageProps {
 
 const Meeting: FC<MeetingPageProps> = ({ params }) => {
   const { id } = params;
-  const { user, isLoaded } = useUser();
+  const { isLoaded } = useUser();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const { call, isCallLoading } = useGetCallById(id);
 
