@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState } from "react";
+import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
 import { useGetCallById } from "@/hooks/useGetCallById";
@@ -11,7 +11,7 @@ interface MeetingPageProps {
   params: { id: string };
 }
 
-const Meeting: FC<MeetingPageProps> = ({ params }) => {
+const Meeting = ({ params }: MeetingPageProps) => {
   const { id } = params;
   const { isLoaded } = useUser();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
