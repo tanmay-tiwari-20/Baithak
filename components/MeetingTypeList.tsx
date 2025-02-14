@@ -71,7 +71,7 @@ const MeetingTypeList = () => {
     }
   };
 
-  const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${callDetails?.id}`
+  const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${callDetails?.id}`;
 
   return (
     <section className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
@@ -83,18 +83,18 @@ const MeetingTypeList = () => {
         className="bg-orange-1"
       />
       <HomeCard
-        img="/icons/join-meeting.svg"
-        title="Join Meeting"
-        description="Join via invitation link"
-        handleClick={() => setMeetingState("isJoiningMeeting")}
-        className="bg-blue-1"
-      />
-      <HomeCard
         img="/icons/schedule.svg"
         title="Schedule Meeting"
         description="Plan your meeting"
         handleClick={() => setMeetingState("isScheduleMeeting")}
         className="bg-purple-1"
+      />
+      <HomeCard
+        img="/icons/join-meeting.svg"
+        title="Join Meeting"
+        description="Join via invitation link"
+        handleClick={() => setMeetingState("isJoiningMeeting")}
+        className="bg-blue-1"
       />
       <HomeCard
         img="/icons/recordings.svg"
