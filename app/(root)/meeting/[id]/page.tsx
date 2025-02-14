@@ -7,11 +7,8 @@ import Loader from "@/components/Loader";
 import MeetingRoom from "@/components/MeetingRoom";
 import MeetingSetup from "@/components/MeetingSetup";
 
-interface MeetingPageProps {
-  params: { id: string };
-}
 
-const Meeting = ({ params }: MeetingPageProps) => {
+const Meeting = ({ params }: { params: { id: string } }) => {
   const { id } = params;
   const { isLoaded } = useUser();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
