@@ -1,18 +1,32 @@
+"use client";
+import { useState, useEffect } from "react";
 import MeetingTypeList from "@/components/MeetingTypeList";
 
 const Home = () => {
-  const now = new Date();
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-  const time = now.toLocaleTimeString("en-US", {
+  // Update time every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000); // Updates every second
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
+
+  // Format time in IST
+  const time = currentTime.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
     timeZone: "Asia/Kolkata",
   });
+
+  // Format date in IST
   const date = new Intl.DateTimeFormat("en-US", {
     dateStyle: "full",
     timeZone: "Asia/Kolkata",
-  }).format(now);
+  }).format(currentTime);
 
   return (
     <section className="flex size-full flex-col gap-5 text-white">
