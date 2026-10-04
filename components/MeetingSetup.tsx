@@ -7,7 +7,7 @@ import {
 } from "@stream-io/video-react-sdk";
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { Mic, MicOff, Video, VideoOff, Settings, ShieldCheck, Share2 } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, ShieldCheck, Share2 } from "lucide-react";
 import BaithakLogo from "./BaithakLogo";
 
 interface MeetingSetupProps {

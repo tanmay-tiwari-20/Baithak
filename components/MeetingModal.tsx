@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import Image from "next/image";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface MeetingModalProps {
   isOpen: boolean;

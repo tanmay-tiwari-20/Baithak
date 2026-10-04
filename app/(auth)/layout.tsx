@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import BaithakLogo from "@/components/BaithakLogo";
-import { ShieldCheck, Video, Users, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, Video, Users } from "lucide-react";
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (

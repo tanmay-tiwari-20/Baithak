@@ -5,7 +5,6 @@ import BaithakLogo from "./BaithakLogo";
 import MobileNav from "./MobileNav";
 import { SignedIn, UserButton } from "@clerk/nextjs";
 import { HelpCircle, MessageSquare, Settings } from "lucide-react";
-import Link from "next/link";
 
 const Navbar = () => {
   const [timeStr, setTimeStr] = useState<string>("");
