@@ -1,17 +1,13 @@
-import Image from 'next/image'
-import React from 'react'
+import React from "react";
+import { Loader2 } from "lucide-react";
 
 const Loader = () => {
   return (
-    <div className='flex-center h-screen w-full'>
-        <Image
-          src="/icons/loading-circle.svg"
-          alt='Loading'
-          width={50}
-          height={50}
-        />
+    <div className="flex flex-col items-center justify-center min-h-[50vh] h-screen w-full bg-[#202124] text-[#E8EAED] gap-4">
+      <Loader2 className="w-10 h-10 animate-spin text-[#8AB4F8]" />
+      <p className="text-sm text-[#9AA0A6] font-normal">Loading Baithak...</p>
     </div>
-  )
-}
+  );
+};
 
-export default Loader
+export default Loader;

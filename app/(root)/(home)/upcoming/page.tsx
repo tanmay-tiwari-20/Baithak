@@ -1,15 +1,21 @@
-import CallList from '@/components/CallList'
-import React from 'react'
+import CallList from "@/components/CallList";
+import React from "react";
 
 const Upcoming = () => {
   return (
-    <section className='flex size-full flex-col gap-10 text-white'>
-      <h1 className='text-3xl font-bold'>
-        Upcoming
-      </h1>
-      <CallList type="upcoming" />
-    </section>
-  )
-}
+    <div className="space-y-8 max-w-6xl text-[#E8EAED]">
+      <div>
+        <h1 className="text-3xl font-normal tracking-tight text-[#E8EAED]">
+          Upcoming Meetings
+        </h1>
+        <p className="text-sm text-[#9AA0A6] mt-1">
+          Review your scheduled calls and calendar invites.
+        </p>
+      </div>
 
-export default Upcoming
+      <CallList type="upcoming" />
+    </div>
+  );
+};
+
+export default Upcoming;

@@ -1,26 +1,24 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/toaster";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
-import 'react-datepicker/dist/react-datepicker.css'
+import "react-datepicker/dist/react-datepicker.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
-  title: "Baithak",
-  description: "Video Calling App",
+  title: "Baithak — Premium Video Meetings & Collaboration",
+  description:
+    "Enterprise-grade, crystal-clear video calling and collaborative meetings inspired by Google Meet with real-time screen sharing, recording, and scheduling.",
   icons: {
     icon: "/icons/logo.svg",
+    apple: "/icons/logo.svg",
   },
 };
 
@@ -30,24 +28,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <ClerkProvider
         appearance={{
           layout: {
-            logoImageUrl: "/icons/yoom-logo.svg",
-            socialButtonsVariant: "iconButton",
+            logoImageUrl: "/icons/logo.svg",
+            socialButtonsVariant: "blockButton",
           },
           variables: {
-            colorText: "#fff",
-            colorPrimary: "#0e78f9",
-            colorBackground: "#1c1f2e",
-            colorInputBackground: "#252a41",
-            colorInputText: "#fff",
+            colorText: "#F8FAFC",
+            colorPrimary: "#00D2D3",
+            colorBackground: "#111622",
+            colorInputBackground: "#171E2D",
+            colorInputText: "#F8FAFC",
+            colorTextSecondary: "#94A3B8",
+            borderRadius: "0.75rem",
           },
         }}
       >
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-dark-2`}
+          className={`${plusJakartaSans.variable} font-sans antialiased bg-dark-1 text-slate-100 min-h-screen selection:bg-brand-cyan/20 selection:text-brand-cyan`}
         >
           {children}
           <Toaster />

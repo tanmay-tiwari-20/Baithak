@@ -1,16 +1,14 @@
 "use client";
 
-import Image from "next/image";
-
-import { cn } from "@/lib/utils";
+import React, { useState } from "react";
 import { Button } from "./ui/button";
-import { avatarImages } from "@/constants";
 import { useToast } from "./ui/use-toast";
+import { Calendar, Clock, Video, Copy, Play, Check } from "lucide-react";
 
 interface MeetingCardProps {
   title: string;
   date: string;
-  icon: string;
+  icon?: string;
   isPreviousMeeting?: boolean;
   buttonIcon1?: string;
   buttonText?: string;
@@ -19,74 +17,86 @@ interface MeetingCardProps {
 }
 
 const MeetingCard = ({
-  icon,
   title,
   date,
   isPreviousMeeting,
-  buttonIcon1,
   handleClick,
   link,
   buttonText,
 }: MeetingCardProps) => {
   const { toast } = useToast();
+  const [copied, setCopied] = useState(false);
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(link);
+    setCopied(true);
+    toast({ title: "Meeting Link Copied" });
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
-    <section className="flex min-h-[258px] w-full flex-col justify-between rounded-[14px] bg-dark-1 px-5 py-8 xl:max-w-[568px]">
-      <article className="flex flex-col gap-5">
-        <Image src={icon} alt="upcoming" width={28} height={28} />
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-bold">{title}</h1>
-            <p className="text-base font-normal">{date}</p>
-          </div>
-        </div>
-      </article>
-      <article className={cn("flex justify-center relative", {})}>
-        <div className="relative flex w-full max-sm:hidden">
-          {avatarImages.map((img, index) => (
-            <Image
-              key={index}
-              src={img}
-              alt="attendees"
-              width={40}
-              height={40}
-              className={cn("rounded-full", { absolute: index > 0 })}
-              style={{ top: 0, left: index * 28 }}
-            />
-          ))}
-          <div className="flex-center absolute left-[136px] size-10 rounded-full border-[5px] border-dark-3 bg-dark-4">
-            +5
-          </div>
-        </div>
-        {!isPreviousMeeting && (
-          <div className="flex gap-2">
-            <Button onClick={handleClick} className="rounded bg-blue-1 px-6">
-              {buttonIcon1 && (
-                <Image src={buttonIcon1} alt="feature" width={20} height={20} />
+    <div className="p-6 rounded-2xl bg-[#28292C] border border-[#3C4043] hover:border-[#5F6368] transition-all flex flex-col justify-between min-h-[190px]">
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-full bg-[#303134] flex items-center justify-center text-[#8AB4F8]">
+              {isPreviousMeeting ? (
+                <Clock className="w-4 h-4" />
+              ) : buttonText === "Play" ? (
+                <Video className="w-4 h-4" />
+              ) : (
+                <Calendar className="w-4 h-4" />
               )}
-              &nbsp; {buttonText}
-            </Button>
-            <Button
-              onClick={() => {
-                navigator.clipboard.writeText(link);
-                toast({
-                  title: "Link Copied",
-                });
-              }}
-              className="bg-dark-4 px-6"
-            >
-              <Image
-                src="/icons/copy.svg"
-                alt="feature"
-                width={20}
-                height={20}
-              />
-              &nbsp; Copy Link
-            </Button>
+            </div>
+            <span className="text-xs font-medium text-[#9AA0A6]">
+              {isPreviousMeeting
+                ? "Past Meeting"
+                : buttonText === "Play"
+                ? "Recording"
+                : "Scheduled Call"}
+            </span>
           </div>
+          
+          <button
+            onClick={copyLink}
+            title="Copy meeting link"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[#9AA0A6] hover:text-[#E8EAED] hover:bg-[#303134] transition-colors"
+          >
+            {copied ? <Check className="w-4 h-4 text-[#8AB4F8]" /> : <Copy className="w-4 h-4" />}
+          </button>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-medium text-[#E8EAED] line-clamp-1">
+            {title}
+          </h3>
+          <p className="text-xs text-[#9AA0A6] mt-1 flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5" />
+            <span>{date || "Instant Call"}</span>
+          </p>
+        </div>
+      </div>
+
+      <div className="pt-4 flex items-center gap-2 border-t border-[#3C4043]/60">
+        {!isPreviousMeeting && (
+          <Button
+            onClick={handleClick}
+            className="rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-medium px-5 h-9"
+          >
+            {buttonText === "Play" && <Play className="w-3.5 h-3.5 mr-1.5 fill-current" />}
+            {buttonText || "Start"}
+          </Button>
         )}
-      </article>
-    </section>
+
+        <Button
+          onClick={copyLink}
+          variant="ghost"
+          className="rounded-full text-xs text-[#9AA0A6] hover:text-[#E8EAED] hover:bg-[#303134] h-9 px-4"
+        >
+          {copied ? "Link Copied" : "Copy Link"}
+        </Button>
+      </div>
+    </div>
   );
 };
 
