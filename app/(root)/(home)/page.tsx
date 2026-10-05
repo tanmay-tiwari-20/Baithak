@@ -19,9 +19,9 @@ const carouselItems = [
   },
   {
     icon: <ShieldCheck className="w-10 h-10 text-[#8AB4F8]" />,
-    title: "Your meeting is safe",
+    title: "Share access with a code",
     description:
-      "No one can join a meeting unless invited or admitted by the host.",
+      "Send your meeting code or link to the people you want to join.",
   },
 ];
 
@@ -59,9 +59,9 @@ const Home = () => {
 
           <div className="pt-4 border-t border-[#3C4043] flex items-center gap-2 text-xs text-[#9AA0A6]">
             <span>Learn more about</span>
-            <a href="#" className="text-[#8AB4F8] hover:underline">
+            <span className="text-[#8AB4F8]">
               Baithak Video Collaboration
-            </a>
+            </span>
           </div>
         </div>
 

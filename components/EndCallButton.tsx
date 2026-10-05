@@ -25,10 +25,11 @@ const EndCallButton = () => {
         router.push("/");
       }}
       title="End call for everyone"
-      className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#EA4335] hover:bg-[#D93025] text-white text-xs font-medium transition-colors"
+      aria-label="End call for everyone"
+      className="flex h-11 min-w-11 items-center justify-center gap-2 rounded-full bg-[#EA4335] px-3 text-xs font-medium text-white transition-colors hover:bg-[#D93025] sm:px-4"
     >
-      <PhoneOff className="w-4 h-4" />
-      <span className="hidden sm:inline">End for all</span>
+      <PhoneOff className="size-[18px] shrink-0" />
+      <span className="hidden lg:inline">End for all</span>
     </button>
   );
 };

@@ -90,14 +90,127 @@ body {
 }
 
 .str-video__speaker-layout__wrapper {
-  max-height: 82vh;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
   gap: 12px;
   padding: 8px;
 }
 
+.str-video__paginated-grid-layout__wrapper {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
 .str-video__paginated-grid-layout {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
   gap: 12px;
   padding: 8px;
+}
+
+/* Let participant tiles use the complete meeting stage and share its height. */
+.meeting-stage .str-video__paginated-grid-layout {
+  align-items: stretch;
+  justify-content: stretch;
+  gap: 0;
+  padding: 0;
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group {
+  display: grid;
+  flex: 1 1 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  align-content: stretch;
+  justify-content: stretch;
+  gap: clamp(6px, 1.2vw, 16px);
+  width: auto;
+  height: 100%;
+  max-width: none;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: clamp(8px, 1.2vw, 18px);
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group.str-video__paginated-grid-layout--one {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group.str-video__paginated-grid-layout--two-four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group.str-video__paginated-grid-layout--five-nine {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group:not(.str-video__paginated-grid-layout--one):not(.str-video__paginated-grid-layout--two-four):not(.str-video__paginated-grid-layout--five-nine) {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group.str-video__paginated-grid-layout--two-four > .str-video__participant-view {
+  grid-column: span 2;
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group.str-video__paginated-grid-layout--five-nine > .str-video__participant-view {
+  grid-column: span 2;
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group:not(.str-video__paginated-grid-layout--one):not(.str-video__paginated-grid-layout--two-four):not(.str-video__paginated-grid-layout--five-nine) > .str-video__participant-view {
+  grid-column: span 3;
+}
+
+/* Expand the final row evenly when it would otherwise leave unused grid cells. */
+.meeting-stage .str-video__paginated-grid-layout__group.str-video__paginated-grid-layout--five-nine > .str-video__participant-view:nth-child(4):nth-last-child(2),
+.meeting-stage .str-video__paginated-grid-layout__group.str-video__paginated-grid-layout--five-nine > .str-video__participant-view:nth-child(5):last-child,
+.meeting-stage .str-video__paginated-grid-layout__group.str-video__paginated-grid-layout--five-nine > .str-video__participant-view:nth-child(7):nth-last-child(2),
+.meeting-stage .str-video__paginated-grid-layout__group.str-video__paginated-grid-layout--five-nine > .str-video__participant-view:nth-child(8):last-child {
+  grid-column: span 3;
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group.str-video__paginated-grid-layout--five-nine > .str-video__participant-view:nth-child(7):last-child {
+  grid-column: span 6;
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group:not(.str-video__paginated-grid-layout--one):not(.str-video__paginated-grid-layout--two-four):not(.str-video__paginated-grid-layout--five-nine) > .str-video__participant-view:nth-child(9):nth-last-child(2),
+.meeting-stage .str-video__paginated-grid-layout__group:not(.str-video__paginated-grid-layout--one):not(.str-video__paginated-grid-layout--two-four):not(.str-video__paginated-grid-layout--five-nine) > .str-video__participant-view:nth-child(10):last-child,
+.meeting-stage .str-video__paginated-grid-layout__group:not(.str-video__paginated-grid-layout--one):not(.str-video__paginated-grid-layout--two-four):not(.str-video__paginated-grid-layout--five-nine) > .str-video__participant-view:nth-child(13):nth-last-child(2),
+.meeting-stage .str-video__paginated-grid-layout__group:not(.str-video__paginated-grid-layout--one):not(.str-video__paginated-grid-layout--two-four):not(.str-video__paginated-grid-layout--five-nine) > .str-video__participant-view:nth-child(14):last-child {
+  grid-column: span 6;
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group:not(.str-video__paginated-grid-layout--one):not(.str-video__paginated-grid-layout--two-four):not(.str-video__paginated-grid-layout--five-nine) > .str-video__participant-view:nth-child(9):nth-last-child(3),
+.meeting-stage .str-video__paginated-grid-layout__group:not(.str-video__paginated-grid-layout--one):not(.str-video__paginated-grid-layout--two-four):not(.str-video__paginated-grid-layout--five-nine) > .str-video__participant-view:nth-child(10):nth-last-child(2),
+.meeting-stage .str-video__paginated-grid-layout__group:not(.str-video__paginated-grid-layout--one):not(.str-video__paginated-grid-layout--two-four):not(.str-video__paginated-grid-layout--five-nine) > .str-video__participant-view:nth-child(11):last-child,
+.meeting-stage .str-video__paginated-grid-layout__group:not(.str-video__paginated-grid-layout--one):not(.str-video__paginated-grid-layout--two-four):not(.str-video__paginated-grid-layout--five-nine) > .str-video__participant-view:nth-child(13):nth-last-child(3),
+.meeting-stage .str-video__paginated-grid-layout__group:not(.str-video__paginated-grid-layout--one):not(.str-video__paginated-grid-layout--two-four):not(.str-video__paginated-grid-layout--five-nine) > .str-video__participant-view:nth-child(14):nth-last-child(2),
+.meeting-stage .str-video__paginated-grid-layout__group:not(.str-video__paginated-grid-layout--one):not(.str-video__paginated-grid-layout--two-four):not(.str-video__paginated-grid-layout--five-nine) > .str-video__participant-view:nth-child(15):last-child {
+  grid-column: span 4;
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group:not(.str-video__paginated-grid-layout--one):not(.str-video__paginated-grid-layout--two-four):not(.str-video__paginated-grid-layout--five-nine) > .str-video__participant-view:nth-child(13):last-child {
+  grid-column: span 12;
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group > .str-video__participant-view {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  min-width: 0;
+  min-height: 0;
+  aspect-ratio: auto;
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group.str-video__paginated-grid-layout--two-four > .str-video__participant-view:nth-child(3):last-child {
+  grid-column: 1 / -1;
+  width: 100%;
 }
 
 .str-video__participant-details {
@@ -135,13 +248,23 @@ body {
   height: 100%;
 }
 
-.str-video__call-controls {
-  gap: 12px;
+.meeting-toolbar .str-video__call-controls {
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
 }
 
-.str-video__call-controls__button {
+.meeting-toolbar .str-video__call-controls__button {
+  display: inline-flex;
+  flex: 0 0 44px;
   height: 44px;
   width: 44px;
+  min-width: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  line-height: 1;
+  vertical-align: middle;
   border-radius: 9999px !important;
   background: #3C4043 !important;
   border: none !important;
@@ -149,8 +272,140 @@ body {
   transition: background-color 0.15s ease;
 }
 
-.str-video__call-controls__button:hover {
+.meeting-toolbar .str-video__call-controls__button .str-video__icon {
+  display: block;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+}
+
+.meeting-toolbar .str-video__call-controls__button:hover {
   background: #5F6368 !important;
+}
+
+.meeting-toolbar .str-video__menu-toggle-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Give the mic/camera controls a clear toggle area and a separate device-menu target. */
+.meeting-toolbar .str-video__composite-button:has(button[data-testid^="audio-"], button[data-testid^="video-"]) {
+  display: flex;
+  flex: 0 0 64px;
+  width: 64px;
+  height: 44px;
+  align-items: center;
+}
+
+.meeting-toolbar .str-video__composite-button:has(button[data-testid^="audio-"], button[data-testid^="video-"]) .str-video__composite-button__button-group {
+  position: relative;
+  display: block;
+  flex: 0 0 64px;
+  width: 64px;
+  height: 44px;
+  overflow: visible;
+  border-radius: 9999px;
+  background: #3C4043 !important;
+  transition: background-color 150ms ease;
+}
+
+.meeting-toolbar .str-video__composite-button:has(button[data-testid^="audio-"], button[data-testid^="video-"]) .str-video__composite-button__button {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  color: #E8EAED;
+  background: transparent;
+}
+
+.meeting-toolbar .str-video__composite-button:has(button[data-testid^="audio-"], button[data-testid^="video-"]) .str-video__menu-toggle-button {
+  position: absolute;
+  inset: 0 0 0 auto;
+  display: inline-flex;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 9999px 9999px 0 !important;
+  background: transparent !important;
+}
+
+.meeting-toolbar .str-video__composite-button:has(button[data-testid^="audio-"], button[data-testid^="video-"]) .str-video__composite-button__button-group:hover {
+  background: #5F6368 !important;
+}
+
+.meeting-toolbar .str-video__composite-button:has(button[data-testid^="audio-"], button[data-testid^="video-"]) .str-video__composite-button__button-group--active-secondary,
+.meeting-toolbar .str-video__composite-button:has(button[data-testid^="audio-"], button[data-testid^="video-"]) .str-video__composite-button__button-group--active-secondary:hover {
+  background: #A52A21 !important;
+}
+
+.meeting-toolbar .str-video__composite-button:has(button[data-testid^="audio-"], button[data-testid^="video-"]) .str-video__composite-button__button .str-video__icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  background-color: currentColor;
+}
+
+.meeting-toolbar__icon-button,
+.meeting-toolbar__side-button {
+  display: inline-flex;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+}
+
+.meeting-toolbar__icon-button {
+  border: 0;
+  border-radius: 9999px;
+  background: #3C4043;
+  color: #E8EAED;
+  transition: background-color 150ms ease;
+}
+
+.meeting-toolbar__icon-button:hover {
+  background: #5F6368;
+}
+
+.meeting-toolbar__center > * {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 700px) {
+  .meeting-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 48px 40px;
+    gap: 2px;
+    padding: 6px 8px;
+  }
+
+  .meeting-toolbar__center {
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .meeting-toolbar__center::-webkit-scrollbar {
+    display: none;
+  }
+
+  .meeting-toolbar__side {
+    justify-content: center;
+  }
 }
 
 .str-video__call-stats {

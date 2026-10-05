@@ -1,102 +1,96 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
-import { Calendar, Clock, Video, Copy, Play, Check } from "lucide-react";
+import { CalendarClock, Check, Clock3, Copy, Download, Video } from "lucide-react";
+import { Button } from "./ui/button";
 
-interface MeetingCardProps {
+type MeetingCardProps = {
   title: string;
   date: string;
-  icon?: string;
-  isPreviousMeeting?: boolean;
-  buttonIcon1?: string;
-  buttonText?: string;
+  kind: "upcoming" | "previous" | "recording";
+  actionText?: string;
   handleClick: () => void;
   link: string;
-}
+};
 
-const MeetingCard = ({
-  title,
-  date,
-  isPreviousMeeting,
-  handleClick,
-  link,
-  buttonText,
-}: MeetingCardProps) => {
+const cardStyle = {
+  upcoming: {
+    label: "Upcoming meeting",
+    icon: CalendarClock,
+  },
+  previous: {
+    label: "Previous meeting",
+    icon: Clock3,
+  },
+  recording: {
+    label: "Recording",
+    icon: Video,
+  },
+};
+
+const MeetingCard = ({ title, date, kind, actionText, handleClick, link }: MeetingCardProps) => {
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
+  const appearance = cardStyle[kind];
+  const Icon = appearance.icon;
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(link);
-    setCopied(true);
-    toast({ title: "Meeting Link Copied" });
-    setTimeout(() => setCopied(false), 2000);
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      toast({ title: kind === "recording" ? "Recording link copied" : "Meeting link copied" });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({ title: "Could not copy the link" });
+    }
   };
 
   return (
-    <div className="p-6 rounded-2xl bg-[#28292C] border border-[#3C4043] hover:border-[#5F6368] transition-all flex flex-col justify-between min-h-[190px]">
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-[#303134] flex items-center justify-center text-[#8AB4F8]">
-              {isPreviousMeeting ? (
-                <Clock className="w-4 h-4" />
-              ) : buttonText === "Play" ? (
-                <Video className="w-4 h-4" />
-              ) : (
-                <Calendar className="w-4 h-4" />
-              )}
-            </div>
-            <span className="text-xs font-medium text-[#9AA0A6]">
-              {isPreviousMeeting
-                ? "Past Meeting"
-                : buttonText === "Play"
-                ? "Recording"
-                : "Scheduled Call"}
+    <article className="group flex min-h-[218px] flex-col justify-between rounded-3xl border border-white/[0.08] bg-[#1c1f27] p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-white/[0.16] hover:bg-[#20242d] sm:p-6">
+      <div className="space-y-5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-[#8AB4F8]/10 text-[#AECBFA]">
+              <Icon className="size-5" />
             </span>
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-[#AECBFA]">{appearance.label}</p>
+            </div>
           </div>
-          
           <button
+            type="button"
             onClick={copyLink}
-            title="Copy meeting link"
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[#9AA0A6] hover:text-[#E8EAED] hover:bg-[#303134] transition-colors"
+            title={kind === "recording" ? "Copy recording link" : "Copy meeting link"}
+            aria-label={kind === "recording" ? "Copy recording link" : "Copy meeting link"}
+            className="flex size-9 shrink-0 items-center justify-center rounded-full text-[#9AA0A6] transition-colors hover:bg-white/[0.07] hover:text-[#E8EAED]"
           >
-            {copied ? <Check className="w-4 h-4 text-[#8AB4F8]" /> : <Copy className="w-4 h-4" />}
+            {copied ? <Check className="size-4 text-[#AECBFA]" /> : <Copy className="size-4" />}
           </button>
         </div>
 
         <div>
-          <h3 className="text-lg font-medium text-[#E8EAED] line-clamp-1">
-            {title}
-          </h3>
-          <p className="text-xs text-[#9AA0A6] mt-1 flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5" />
-            <span>{date || "Instant Call"}</span>
+          <h3 className="line-clamp-2 min-h-12 text-lg font-medium leading-6 text-[#F1F3F4]">{title}</h3>
+          <p className="mt-3 flex items-center gap-2 text-xs text-[#9AA0A6]">
+            <Clock3 className="size-3.5 shrink-0" />
+            <span>{date}</span>
           </p>
         </div>
       </div>
 
-      <div className="pt-4 flex items-center gap-2 border-t border-[#3C4043]/60">
-        {!isPreviousMeeting && (
+      <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/[0.07] pt-4">
+        <span className="truncate text-xs text-[#747984]">{kind === "recording" ? "Saved meeting recording" : "Baithak meeting room"}</span>
+        {actionText && (
           <Button
             onClick={handleClick}
-            className="rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs font-medium px-5 h-9"
+            className="h-9 shrink-0 rounded-full bg-[#8AB4F8] px-4 text-xs font-medium text-[#111318] hover:bg-[#AECBFA]"
           >
-            {buttonText === "Play" && <Play className="w-3.5 h-3.5 mr-1.5 fill-current" />}
-            {buttonText || "Start"}
+            {kind === "recording" && <Download className="mr-1.5 size-3.5" />}
+            {actionText}
           </Button>
         )}
-
-        <Button
-          onClick={copyLink}
-          variant="ghost"
-          className="rounded-full text-xs text-[#9AA0A6] hover:text-[#E8EAED] hover:bg-[#303134] h-9 px-4"
-        >
-          {copied ? "Link Copied" : "Copy Link"}
-        </Button>
       </div>
-    </div>
+    </article>
   );
 };
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -9,38 +8,43 @@ import {
   CallStatsButton,
   PaginatedGridLayout,
   SpeakerLayout,
-  useCall,
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   LayoutList,
   Users,
   Info,
-  PhoneOff,
   Copy,
   Check,
-  Smile,
-  Hand,
-  MoreVertical,
   ShieldCheck,
+  DoorOpen,
+  DoorClosed,
 } from "lucide-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import EndCallButton from "./EndCallButton";
 import Loader from "./Loader";
 import { useToast } from "@/hooks/use-toast";
+import MeetingAdmissionControls from "./MeetingAdmissionControls";
+import { useMeetingAccess } from "@/hooks/useMeetingAccess";
 
-type CallLayoutType = "grid" | "speaker-left" | "speaker-right";
+type CallLayoutType = "grid" | "speaker-left";
 
-const reactions = ["👍", "👏", "❤️", "🎉", "😂", "😮"];
+const MeetingCallLayout = ({ layout }: { layout: CallLayoutType }) => {
+  switch (layout) {
+    case "grid":
+      return <PaginatedGridLayout groupSize={16} />;
+    default:
+      return <SpeakerLayout participantsBarPosition="bottom" participantsBarLimit="dynamic" />;
+  }
+};
 
 const MeetingRoom = () => {
   const params = useParams();
@@ -48,19 +52,17 @@ const MeetingRoom = () => {
   const meetingId = (params?.id as string) || "";
   const isPersonalRoom = !!searchParams.get("personal");
 
-  const [layout, setLayout] = useState<CallLayoutType>("speaker-left");
-  const [showParticipants, setShowParticipants] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
-  const [showReactions, setShowReactions] = useState(false);
+  const [layout, setLayout] = useState<CallLayoutType>("grid");
+  const [activePanel, setActivePanel] = useState<"people" | "info" | "access" | null>(null);
   const [copied, setCopied] = useState(false);
   const [currentTime, setCurrentTime] = useState("");
 
-  const call = useCall();
   const { useCallCallingState, useParticipantCount } = useCallStateHooks();
   const callingState = useCallCallingState();
   const participantCount = useParticipantCount();
   const router = useRouter();
   const { toast } = useToast();
+  const { call: currentCall, isHost, quickAccess, pendingRequests, custom } = useMeetingAccess();
 
   useEffect(() => {
     const updateTime = () => {
@@ -74,87 +76,98 @@ const MeetingRoom = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const sendReaction = async (emoji: string) => {
-    if (!call) return;
+  const copyMeetingInfo = async () => {
     try {
-      await call.sendCustomEvent({
-        type: "reaction",
-        emoji,
-      });
-      toast({ title: `Sent ${emoji}` });
-      setShowReactions(false);
-    } catch (e) {
-      console.log(e);
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      toast({ title: "Meeting link copied" });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({ title: "Could not copy meeting link" });
     }
   };
 
-  const copyMeetingInfo = () => {
-    const link = window.location.href;
-    navigator.clipboard.writeText(link);
-    setCopied(true);
-    toast({ title: "Meeting Link Copied" });
-    setTimeout(() => setCopied(false), 2000);
+  const copyMeetingCode = async () => {
+    try {
+      await navigator.clipboard.writeText(meetingId);
+      toast({ title: "Meeting code copied" });
+    } catch {
+      toast({ title: "Could not copy meeting code" });
+    }
   };
 
   if (callingState !== CallingState.JOINED) return <Loader />;
 
-  const CallLayout = () => {
-    switch (layout) {
-      case "grid":
-        return <PaginatedGridLayout />;
-      case "speaker-right":
-        return <SpeakerLayout participantsBarPosition="left" />;
-      default:
-        return <SpeakerLayout participantsBarPosition="right" />;
-    }
-  };
-
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-[#202124] text-[#E8EAED] flex flex-col justify-between select-none">
+    <section className="relative flex h-dvh w-full select-none flex-col justify-between overflow-hidden bg-[#111318] text-[#E8EAED]">
       {/* Top Subtle Bar */}
-      <header className="h-12 px-6 flex items-center justify-between z-10">
-        <div className="flex items-center gap-2 text-xs text-[#9AA0A6]">
-          <ShieldCheck className="w-4 h-4 text-[#8AB4F8]" />
-          <span>Baithak Secure Room</span>
+      <header className="z-10 flex h-14 shrink-0 items-center justify-between px-4 sm:px-6">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex size-9 items-center justify-center rounded-xl bg-[#8AB4F8]/10 text-[#AECBFA]">
+            <ShieldCheck className="size-4" />
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-[#E8EAED]">{custom.description || "Baithak meeting"}</p>
+            <p className="text-xs text-[#8B909A]">{participantCount} {participantCount === 1 ? "person" : "people"} in this meeting</p>
+          </div>
         </div>
-        <div className="text-xs text-[#9AA0A6]">{currentTime}</div>
+        <div className="flex items-center gap-2">
+          <span className="hidden rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-[#BEC2CB] sm:inline-flex">{currentTime}</span>
+          {isHost && (currentCall?.type === "baithak" || currentCall?.type === "default") && (
+            <button
+              onClick={() => setActivePanel((panel) => panel === "access" ? null : "access")}
+              title="Meeting access controls"
+              className={`relative flex h-9 items-center gap-2 rounded-full border px-3 text-xs font-medium transition-colors ${activePanel === "access" ? "border-[#8AB4F8]/40 bg-[#8AB4F8]/10 text-[#AECBFA]" : "border-white/10 bg-white/[0.04] text-[#C6CAD2] hover:bg-white/[0.08]"}`}
+            >
+              {quickAccess ? <DoorOpen className="size-4" /> : <DoorClosed className="size-4" />}
+              <span className="hidden sm:inline">{quickAccess ? "Open access" : "Host approval"}</span>
+              {pendingRequests.length > 0 && <span className="flex size-4 items-center justify-center rounded-full bg-[#8AB4F8] text-[10px] font-bold text-[#111318]">{pendingRequests.length}</span>}
+            </button>
+          )}
+        </div>
       </header>
 
-      {/* Main Video Presentation Grid */}
-      <div className="relative flex-1 flex items-center justify-center p-4 overflow-hidden">
-        <div className="flex size-full max-w-[1200px] items-center justify-center">
-          <CallLayout />
+      {/* Responsive participant layout */}
+      <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden px-2 pb-2 sm:px-5 sm:pb-3">
+        <div className="meeting-stage flex size-full items-center justify-center overflow-hidden rounded-xl border border-white/[0.06] bg-[#171a21] shadow-2xl shadow-black/20 sm:rounded-2xl">
+          <MeetingCallLayout layout={layout} />
         </div>
 
+        {activePanel === "access" && isHost && (
+          <div className="absolute right-4 top-4 z-40 w-[min(22rem,calc(100vw-2rem))] rounded-2xl border border-white/10 bg-[#1c1f27] p-3 shadow-2xl shadow-black/40 sm:right-7 sm:top-5">
+            <MeetingAdmissionControls compact />
+          </div>
+        )}
+
         {/* Right Drawer: Participants Panel */}
-        {showParticipants && (
-          <div className="absolute right-4 top-4 bottom-24 w-80 rounded-2xl bg-[#28292C] border border-[#3C4043] p-4 shadow-2xl z-30 flex flex-col">
-            <div className="flex items-center justify-between pb-3 border-b border-[#3C4043]">
+        {activePanel === "people" && (
+          <div className="absolute right-4 top-4 bottom-4 z-30 flex w-[min(22rem,calc(100vw-2rem))] flex-col rounded-2xl border border-white/10 bg-[#1c1f27]/95 p-4 shadow-2xl shadow-black/40 backdrop-blur-xl">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-[#8AB4F8]" />
                 <span className="font-medium text-sm text-[#E8EAED]">People</span>
                 <span className="text-xs text-[#9AA0A6]">({participantCount})</span>
               </div>
               <button
-                onClick={() => setShowParticipants(false)}
+                onClick={() => setActivePanel(null)}
                 className="text-xs text-[#9AA0A6] hover:text-[#E8EAED]"
               >
                 Close
               </button>
             </div>
             <div className="flex-1 overflow-y-auto pt-2">
-              <CallParticipantsList onClose={() => setShowParticipants(false)} />
+              <CallParticipantsList onClose={() => setActivePanel(null)} />
             </div>
           </div>
         )}
 
         {/* Right Drawer: Meeting Info Panel */}
-        {showInfo && (
-          <div className="absolute right-4 top-4 w-80 rounded-2xl bg-[#28292C] border border-[#3C4043] p-5 shadow-2xl z-30 space-y-4">
+        {activePanel === "info" && (
+          <div className="absolute right-4 top-4 z-30 w-[min(22rem,calc(100vw-2rem))] space-y-4 rounded-2xl border border-white/10 bg-[#1c1f27]/95 p-5 shadow-2xl shadow-black/40 backdrop-blur-xl">
             <div className="flex items-center justify-between">
               <span className="font-medium text-sm text-[#E8EAED]">Joining info</span>
               <button
-                onClick={() => setShowInfo(false)}
+                onClick={() => setActivePanel(null)}
                 className="text-xs text-[#9AA0A6] hover:text-[#E8EAED]"
               >
                 Close
@@ -175,64 +188,36 @@ const MeetingRoom = () => {
         )}
       </div>
 
-      {/* Floating Reaction Bubble Bar if active */}
-      {showReactions && (
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-[#28292C] border border-[#3C4043] px-4 py-2 rounded-full shadow-2xl flex items-center gap-3 z-40">
-          {reactions.map((emoji) => (
-            <button
-              key={emoji}
-              onClick={() => sendReaction(emoji)}
-              className="text-2xl hover:scale-125 transition-transform"
-            >
-              {emoji}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Iconic Google Meet Bottom Docking Bar */}
-      <footer className="h-20 bg-[#202124] border-t border-[#3C4043] px-4 md:px-8 flex items-center justify-between z-20">
+      {/* Meeting controls */}
+      <footer className="z-20 shrink-0 px-2 pb-2 sm:px-5 sm:pb-4">
+        <div className="meeting-toolbar mx-auto grid min-h-16 max-w-[1600px] grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-2xl border border-white/[0.08] bg-[#1c1f27]/95 px-3 shadow-2xl shadow-black/30 backdrop-blur-xl sm:min-h-[4.5rem] sm:px-5">
         {/* Left: Time & Meeting Code */}
-        <div className="hidden md:flex items-center gap-4 text-sm">
+        <div className="hidden min-w-0 items-center gap-3 text-sm lg:flex">
           <span className="font-normal text-[#E8EAED]">{currentTime}</span>
           <span className="text-[#5F6368]">|</span>
           <button
-            onClick={copyMeetingInfo}
-            title="Click to copy meeting code"
+            onClick={copyMeetingCode}
+            title="Copy meeting code"
             className="flex items-center gap-1.5 font-mono text-xs text-[#9AA0A6] hover:text-[#E8EAED] px-2.5 py-1 rounded-md hover:bg-[#303134] transition-colors"
           >
-            <span>{meetingId.substring(0, 12)}...</span>
+            <span>{meetingId.length > 12 ? `${meetingId.substring(0, 12)}…` : meetingId}</span>
             <Copy className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* Center: Action Controls */}
-        <div className="flex items-center gap-2 sm:gap-3 mx-auto md:mx-0">
+        <div className="meeting-toolbar__center flex min-w-0 items-center justify-center gap-1.5 sm:gap-2">
           {/* Stream Standard Video/Audio Controls */}
           <CallControls onLeave={() => router.push("/")} />
-
-          {/* Reactions Button */}
-          <button
-            onClick={() => setShowReactions((prev) => !prev)}
-            title="Send a reaction"
-            className={cn(
-              "w-11 h-11 rounded-full flex items-center justify-center transition-colors",
-              showReactions
-                ? "bg-[#8AB4F8] text-[#202124]"
-                : "bg-[#3C4043] text-white hover:bg-[#5F6368]"
-            )}
-          >
-            <Smile className="w-5 h-5" />
-          </button>
 
           {/* Layout Switcher Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 title="Change layout"
-                className="w-11 h-11 rounded-full bg-[#3C4043] hover:bg-[#5F6368] text-white flex items-center justify-center transition-colors"
+                className="meeting-toolbar__icon-button"
               >
-                <LayoutList className="w-5 h-5" />
+                <LayoutList className="size-5 shrink-0" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -241,22 +226,16 @@ const MeetingRoom = () => {
               className="bg-[#28292C] border border-[#3C4043] text-[#E8EAED] rounded-xl p-1.5 shadow-xl"
             >
               <DropdownMenuItem
-                onClick={() => setLayout("speaker-left")}
-                className="cursor-pointer px-3 py-2 text-sm rounded-lg hover:bg-[#303134] focus:bg-[#303134]"
-              >
-                Speaker (Side by side)
-              </DropdownMenuItem>
-              <DropdownMenuItem
                 onClick={() => setLayout("grid")}
                 className="cursor-pointer px-3 py-2 text-sm rounded-lg hover:bg-[#303134] focus:bg-[#303134]"
               >
-                Tiled Grid
+                Auto · Adaptive grid
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => setLayout("speaker-right")}
+                onClick={() => setLayout("speaker-left")}
                 className="cursor-pointer px-3 py-2 text-sm rounded-lg hover:bg-[#303134] focus:bg-[#303134]"
               >
-                Speaker (Right bar)
+                Spotlight with filmstrip
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -269,14 +248,14 @@ const MeetingRoom = () => {
         </div>
 
         {/* Right: Info + Participants Toggle */}
-        <div className="flex items-center gap-2">
+        <div className="meeting-toolbar__side flex min-w-0 items-center justify-end gap-1 sm:gap-2">
           {/* Info Details Trigger */}
           <button
-            onClick={() => setShowInfo((prev) => !prev)}
+            onClick={() => setActivePanel((panel) => panel === "info" ? null : "info")}
             title="Meeting details"
             className={cn(
-              "w-10 h-10 rounded-full flex items-center justify-center transition-colors",
-              showInfo
+              "meeting-toolbar__side-button rounded-full flex items-center justify-center transition-colors",
+              activePanel === "info"
                 ? "bg-[#303134] text-[#8AB4F8]"
                 : "text-[#9AA0A6] hover:text-[#E8EAED] hover:bg-[#303134]"
             )}
@@ -286,22 +265,23 @@ const MeetingRoom = () => {
 
           {/* Participants Toggle */}
           <button
-            onClick={() => setShowParticipants((prev) => !prev)}
+            onClick={() => setActivePanel((panel) => panel === "people" ? null : "people")}
             title="People in call"
             className={cn(
-              "relative w-10 h-10 rounded-full flex items-center justify-center transition-colors",
-              showParticipants
+              "meeting-toolbar__side-button relative rounded-full flex items-center justify-center transition-colors",
+              activePanel === "people"
                 ? "bg-[#303134] text-[#8AB4F8]"
                 : "text-[#9AA0A6] hover:text-[#E8EAED] hover:bg-[#303134]"
             )}
           >
             <Users className="w-5 h-5" />
             {participantCount > 0 && (
-              <span className="absolute top-1 right-1 px-1.5 py-0.2 bg-[#8AB4F8] text-[#202124] rounded-full text-[10px] font-bold">
+                <span className="absolute -right-0.5 -top-0.5 min-w-4 rounded-full bg-[#8AB4F8] px-1 text-center text-[10px] leading-4 font-bold text-[#202124]">
                 {participantCount}
               </span>
             )}
           </button>
+        </div>
         </div>
       </footer>
     </section>

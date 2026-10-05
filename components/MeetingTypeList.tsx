@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import MeetingModal from "./MeetingModal";
 import { useUser } from "@clerk/nextjs";
@@ -26,14 +25,14 @@ import {
   PlaySquare,
   Copy,
   Check,
-  Shield,
-  ArrowRight,
 } from "lucide-react";
+import { createMeetingCode, getMeetingIdFromInput } from "@/lib/meeting-code";
+import { ensureBaithakCallType } from "@/actions/stream.actions";
 
 const MeetingTypeList = () => {
   const router = useRouter();
   const [meetingState, setMeetingState] = useState<
-    "isScheduleMeeting" | "isJoiningMeeting" | "isInstantMeeting" | "isMeetingLater" | undefined
+    "isScheduleMeeting" | "isInstantMeeting" | "isMeetingLater" | undefined
   >();
 
   const { user } = useUser();
@@ -46,93 +45,116 @@ const MeetingTypeList = () => {
   const [callDetails, setCallDetails] = useState<Call>();
   const [createdLaterCall, setCreatedLaterCall] = useState<Call>();
   const [copied, setCopied] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const createMeeting = async () => {
-    if (!client || !user) return;
+    if (!client || !user || isSubmitting) return;
 
     try {
-      if (!values.dateTime) {
-        toast({ title: "Please select a date and time" });
+      const isScheduled = meetingState === "isScheduleMeeting";
+      if (isScheduled && (!values.dateTime || values.dateTime <= new Date())) {
+        toast({ title: "Choose a future date and time" });
         return;
       }
 
-      const id = crypto.randomUUID();
-      const call = client.call("default", id);
+      setIsSubmitting(true);
+      await ensureBaithakCallType();
+      const id = createMeetingCode();
+      const call = client.call("baithak", id);
       if (!call) throw new Error("Failed to create call");
-
-      const startsAt =
-        values.dateTime.toISOString() || new Date(Date.now()).toISOString();
-      const description = values.description || "Instant Meeting";
 
       await call.getOrCreate({
         data: {
-          starts_at: startsAt,
+          ...(isScheduled ? { starts_at: values.dateTime.toISOString() } : {}),
           custom: {
-            description,
+            description: isScheduled
+              ? values.description.trim() || "Scheduled meeting"
+              : "Instant meeting",
+            quick_access: false,
+            pending_requests: [],
+            admission_statuses: {},
           },
+          members: [{ user_id: user.id, role: "admin" }],
         },
       });
 
       setCallDetails(call);
 
-      if (!values.description) {
+      if (!isScheduled) {
         router.push(`/meeting/${call.id}`);
       }
       toast({ title: "Meeting Created" });
     } catch (error) {
-      console.log(error);
+      console.error("Failed to create meeting", error);
       toast({ title: "Failed to create meeting" });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const createMeetingForLater = async () => {
-    if (!client || !user) return;
+    if (!client || !user || isSubmitting) return;
 
     try {
-      const id = crypto.randomUUID();
-      const call = client.call("default", id);
+      setIsSubmitting(true);
+      await ensureBaithakCallType();
+      const id = createMeetingCode();
+      const call = client.call("baithak", id);
       if (!call) throw new Error("Failed to create call");
 
       await call.getOrCreate({
         data: {
-          starts_at: new Date(Date.now()).toISOString(),
           custom: {
-            description: "Quick Meeting",
+            description: "Meeting",
+            quick_access: false,
+            pending_requests: [],
+            admission_statuses: {},
           },
+          members: [{ user_id: user.id, role: "admin" }],
         },
       });
 
       setCreatedLaterCall(call);
       setMeetingState("isMeetingLater");
     } catch (error) {
-      console.log(error);
+      console.error("Failed to create meeting link", error);
       toast({ title: "Failed to create meeting link" });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const cleanAndJoinLink = () => {
-    if (!values.link.trim()) return;
+  const cleanAndJoinLink = async () => {
+    if (!client || isSubmitting) return;
+    const meetingId = getMeetingIdFromInput(values.link);
+    if (!meetingId) {
+      toast({ title: "Enter a valid Baithak meeting code or link" });
+      return;
+    }
 
-    let target = values.link.trim();
-    if (target.startsWith("http")) {
-      try {
-        const url = new URL(target);
-        target = url.pathname;
-      } catch {
-        // If not valid URL, keep string
+    setIsSubmitting(true);
+    try {
+      const { calls } = await client.queryCalls({
+        filter_conditions: { id: meetingId },
+        limit: 1,
+      });
+      if (calls.length === 0) {
+        toast({ title: "Meeting not found", description: "Check the code or ask the host for a new link." });
+        return;
       }
+      router.push(`/meeting/${encodeURIComponent(meetingId)}`);
+    } catch (error) {
+      console.error("Failed to find meeting", error);
+      toast({ title: "Unable to join meeting", description: "Please try again in a moment." });
+    } finally {
+      setIsSubmitting(false);
     }
-
-    if (!target.startsWith("/meeting/")) {
-      target = `/meeting/${target}`;
-    }
-
-    router.push(target);
   };
 
-  const scheduledMeetingLink = `${process.env.NEXT_PUBLIC_BASE_URL || window?.location?.origin || ""}/meeting/${callDetails?.id}`;
-  const laterMeetingLink = `${process.env.NEXT_PUBLIC_BASE_URL || window?.location?.origin || ""}/meeting/${createdLaterCall?.id}`;
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== "undefined" ? window.location.origin : "")).replace(/\/+$/, "");
+  const scheduledMeetingLink = `${baseUrl}/meeting/${callDetails?.id}`;
+  const laterMeetingLink = `${baseUrl}/meeting/${createdLaterCall?.id}`;
 
   return (
     <div className="space-y-10">
@@ -189,10 +211,10 @@ const MeetingTypeList = () => {
           </div>
           <button
             onClick={cleanAndJoinLink}
-            disabled={!values.link.trim()}
+            disabled={!values.link.trim() || isSubmitting}
             className="px-5 py-3 rounded-full text-sm font-medium transition-colors disabled:text-[#5F6368] disabled:cursor-not-allowed text-[#8AB4F8] hover:bg-[#303134]"
           >
-            Join
+            {isSubmitting ? "Joining…" : "Join"}
           </button>
         </div>
       </div>
@@ -329,6 +351,10 @@ const MeetingTypeList = () => {
             <p className="text-sm font-mono text-[#8AB4F8] break-all select-all">
               {scheduledMeetingLink}
             </p>
+            <p className="text-xs text-[#9AA0A6] pt-2">Meeting code</p>
+            <p className="text-sm font-mono text-[#E8EAED] tracking-wider select-all">
+              {callDetails?.id}
+            </p>
           </div>
         </MeetingModal>
       )}
@@ -366,6 +392,12 @@ const MeetingTypeList = () => {
             >
               <Copy className="w-4 h-4" />
             </button>
+          </div>
+          <div className="p-3.5 rounded-xl bg-[#202124] border border-[#3C4043] space-y-1">
+            <p className="text-xs text-[#9AA0A6]">Meeting code</p>
+            <p className="text-sm font-mono text-[#E8EAED] tracking-wider select-all">
+              {createdLaterCall?.id}
+            </p>
           </div>
         </div>
       </MeetingModal>

@@ -54,7 +54,7 @@ const Sidebar = () => {
       {/* Bottom Security / Status Footer */}
       <div className="max-lg:hidden p-3 rounded-xl bg-[#28292C] border border-[#3C4043] flex items-center gap-2.5 text-xs text-[#9AA0A6]">
         <ShieldCheck className="w-4 h-4 text-[#8AB4F8] shrink-0" />
-        <span>Enterprise 256-bit Encrypted</span>
+        <span>Share meetings by code or link</span>
       </div>
     </aside>
   );

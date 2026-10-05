@@ -1,154 +1,223 @@
 "use client";
 
 import { Call, CallRecording } from "@stream-io/video-react-sdk";
-import Loader from "./Loader";
-import { useGetCalls } from "@/hooks/useGetCalls";
-import MeetingCard from "./MeetingCard";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { CalendarClock, Clapperboard, History, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, History, Video, Plus } from "lucide-react";
-import { Button } from "./ui/button";
+import { useGetCalls } from "@/hooks/useGetCalls";
+import Loader from "./Loader";
+import MeetingCard from "./MeetingCard";
 
-const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
+type CallListProps = {
+  type: "ended" | "upcoming" | "recordings";
+  refreshKey?: number;
+};
+
+type NamedRecording = CallRecording & {
+  meetingName: string;
+  callId: string;
+  callType: string;
+};
+
+const getRecordingFileName = (recording: NamedRecording) => {
+  const baseName = recording.meetingName
+    .trim()
+    .replace(/[<>:"/\\|?*\u0000-\u001F]/g, "-")
+    .replace(/\s+/g, " ")
+    .replace(/[. ]+$/g, "")
+    .slice(0, 100) || "Baithak meeting";
+  const extension = recording.filename.match(/\.[a-z0-9]{2,5}$/i)?.[0] || ".mp4";
+  return `${baseName}${extension}`;
+};
+
+const CallList = ({ type, refreshKey = 0 }: CallListProps) => {
   const router = useRouter();
-  const { endedCalls, upcomingCalls, callRecordings, isLoading } =
-    useGetCalls();
-  const [recordings, setRecordings] = useState<CallRecording[]>([]);
-
+  const [manualRefreshKey, setManualRefreshKey] = useState(0);
+  const { endedCalls, upcomingCalls, callRecordings, isLoading } = useGetCalls(refreshKey + manualRefreshKey);
+  const [recordings, setRecordings] = useState<NamedRecording[]>([]);
+  const [isLoadingRecordings, setIsLoadingRecordings] = useState(type === "recordings");
   const { toast } = useToast();
-  const getCalls = () => {
-    switch (type) {
-      case "ended":
-        return endedCalls;
-      case "recordings":
-        return recordings;
-      case "upcoming":
-        return upcomingCalls;
-      default:
-        return [];
-    }
-  };
+  const baseUrl = (
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    (typeof window !== "undefined" ? window.location.origin : "")
+  ).replace(/\/+$/, "");
+  const refreshButton = (
+    <div className="mb-4 flex justify-end">
+      <button
+        type="button"
+        onClick={() => setManualRefreshKey((key) => key + 1)}
+        disabled={isLoading || isLoadingRecordings}
+        className="inline-flex h-9 items-center gap-2 rounded-full border border-white/10 px-3 text-xs font-medium text-[#BEC2CB] transition-colors hover:bg-white/[0.06] disabled:opacity-50"
+      >
+        <RefreshCw className={`size-3.5 ${isLoading || isLoadingRecordings ? "animate-spin" : ""}`} />
+        Refresh
+      </button>
+    </div>
+  );
 
-  const getEmptyStateDetails = () => {
-    switch (type) {
-      case "ended":
-        return {
-          icon: <History className="w-8 h-8 text-[#9AA0A6]" />,
-          title: "No previous meetings",
-          description: "Calls that you joined or completed will appear here.",
-        };
-      case "upcoming":
-        return {
-          icon: <Calendar className="w-8 h-8 text-[#9AA0A6]" />,
-          title: "No upcoming meetings",
-          description: "When you schedule a meeting, it will appear here.",
-        };
-      case "recordings":
-        return {
-          icon: <Video className="w-8 h-8 text-[#9AA0A6]" />,
-          title: "No recordings found",
-          description: "Recorded meetings and transcripts will be stored here.",
-        };
-      default:
-        return {
-          icon: <Calendar className="w-8 h-8 text-[#9AA0A6]" />,
-          title: "No meetings found",
-          description: "",
-        };
+  const downloadRecording = async (recording: NamedRecording) => {
+    const fileName = getRecordingFileName(recording);
+    try {
+      const response = await fetch(recording.url);
+      if (!response.ok) throw new Error(`Recording download failed (${response.status})`);
+      const objectUrl = URL.createObjectURL(await response.blob());
+      const anchor = document.createElement("a");
+      anchor.href = objectUrl;
+      anchor.download = fileName;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
+      toast({ title: "Recording downloaded", description: fileName });
+    } catch (error) {
+      console.error("Unable to download recording", error);
+      toast({
+        title: "Could not save this recording",
+        description: "Copy the recording link and open it in a new tab to try again.",
+      });
     }
   };
 
   useEffect(() => {
+    if (type !== "recordings" || isLoading) return;
+
+    let cancelled = false;
+    setIsLoadingRecordings(true);
     const fetchRecordings = async () => {
-      try {
-        const callData = await Promise.all(
-          callRecordings?.map((meeting) => meeting.queryRecordings()) ?? []
+      const results = await Promise.all(
+        callRecordings.map(async (meeting) => {
+          try {
+            const response = await meeting.queryRecordings();
+            const meetingName =
+              (meeting.state.custom?.description as string | undefined)?.trim() ||
+              "Baithak meeting";
+            return response.recordings.map((recording) => ({
+              ...recording,
+              meetingName,
+              callId: meeting.id,
+              callType: meeting.type,
+            }));
+          } catch (error) {
+            console.error(`Unable to load recordings for ${meeting.id}`, error);
+            return [];
+          }
+        }),
+      );
+
+      if (!cancelled) {
+        setRecordings(
+          results
+            .flat()
+            .sort((a, b) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime()),
         );
-
-        const recordings = callData
-          .filter((call) => call.recordings.length > 0)
-          .flatMap((call) => call.recordings);
-
-        setRecordings(recordings);
-      } catch {
-        toast({ title: "Unable to load recordings" });
+        setIsLoadingRecordings(false);
       }
     };
 
-    if (type === "recordings") {
-      fetchRecordings();
+    void fetchRecordings().catch((error) => {
+      console.error("Unable to load recordings", error);
+      if (!cancelled) {
+        setRecordings([]);
+        setIsLoadingRecordings(false);
+        toast({ title: "Unable to load recordings" });
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [type, callRecordings, isLoading, refreshKey, toast]);
+
+  if (isLoading || (type === "recordings" && isLoadingRecordings)) return <Loader />;
+
+  if (type === "recordings") {
+    if (recordings.length === 0) {
+      return <>{refreshButton}<EmptyState type={type} /></>;
     }
-  }, [type, callRecordings, toast]);
 
-  if (isLoading) return <Loader />;
-
-  const calls = getCalls();
-  const emptyState = getEmptyStateDetails();
-
-  if (!calls || calls.length === 0) {
     return (
-      <div className="w-full py-16 flex flex-col items-center justify-center text-center space-y-4 rounded-2xl bg-[#28292C]/40 border border-[#3C4043]">
-        <div className="w-16 h-16 rounded-full bg-[#303134] flex items-center justify-center">
-          {emptyState.icon}
+      <>
+        {refreshButton}
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {recordings.map((recording) => (
+            <MeetingCard
+              key={`${recording.callType}:${recording.callId}:${recording.filename}:${recording.start_time}`}
+              title={recording.meetingName}
+              date={new Date(recording.start_time).toLocaleString([], {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
+              kind="recording"
+              actionText="Download recording"
+              link={recording.url}
+              handleClick={() => void downloadRecording(recording)}
+            />
+          ))}
         </div>
-        <div className="space-y-1">
-          <h2 className="text-xl font-normal text-[#E8EAED]">{emptyState.title}</h2>
-          <p className="text-sm text-[#9AA0A6] max-w-sm">{emptyState.description}</p>
-        </div>
-        {type === "upcoming" && (
-          <Button
-            onClick={() => router.push("/")}
-            className="rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white text-xs px-6 h-10 mt-2 flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Schedule a meeting</span>
-          </Button>
-        )}
-      </div>
+      </>
     );
   }
 
+  const calls: Call[] = type === "ended" ? endedCalls : upcomingCalls;
+  if (calls.length === 0) return <>{refreshButton}<EmptyState type={type} /></>;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      {calls.map((meeting: Call | CallRecording) => (
-        <MeetingCard
-          key={(meeting as Call).id || (meeting as CallRecording).filename}
-          title={
-            (meeting as Call).state?.custom?.description ||
-            (meeting as CallRecording).filename?.substring(0, 30) ||
-            "Baithak Meeting"
-          }
-          date={
-            (meeting as Call).state?.startsAt
-              ? new Date((meeting as Call).state.startsAt!).toLocaleString([], {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })
-              : (meeting as CallRecording).start_time
-              ? new Date((meeting as CallRecording).start_time).toLocaleString([], {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })
-              : "Instant Call"
-          }
-          isPreviousMeeting={type === "ended"}
-          link={
-            type === "recordings"
-              ? (meeting as CallRecording).url
-              : `${process.env.NEXT_PUBLIC_BASE_URL || window?.location?.origin || ""}/meeting/${
-                  (meeting as Call).id
-                }`
-          }
-          buttonIcon1={type === "recordings" ? "/icons/play.svg" : undefined}
-          buttonText={type === "recordings" ? "Play" : "Start"}
-          handleClick={
-            type === "recordings"
-              ? () => router.push(`${(meeting as CallRecording).url}`)
-              : () => router.push(`/meeting/${(meeting as Call).id}`)
-          }
-        />
-      ))}
+    <>
+      {refreshButton}
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {calls.map((meeting) => (
+          <MeetingCard
+            key={`${meeting.type}:${meeting.id}`}
+            title={(meeting.state.custom?.description as string | undefined)?.trim() || "Baithak meeting"}
+            date={new Date(
+              type === "ended"
+                ? meeting.state.endedAt || meeting.state.startsAt || meeting.state.createdAt
+                : meeting.state.startsAt || meeting.state.createdAt,
+            ).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}
+            kind={type === "ended" ? "previous" : "upcoming"}
+            actionText={type === "ended" ? "Open meeting" : "Join meeting"}
+            link={`${baseUrl}/meeting/${encodeURIComponent(meeting.id)}`}
+            handleClick={() => router.push(`/meeting/${encodeURIComponent(meeting.id)}`)}
+          />
+        ))}
+      </div>
+    </>
+  );
+};
+
+const emptyStateContent = {
+  ended: {
+    eyebrow: "Your meeting history",
+    title: "No previous meetings yet",
+    text: "Finished meetings will appear here, so you can revisit their room details.",
+    icon: History,
+  },
+  upcoming: {
+    eyebrow: "Your calendar",
+    title: "Your schedule is clear",
+    text: "Scheduled meetings will appear here with their room links and start times.",
+    icon: CalendarClock,
+  },
+  recordings: {
+    eyebrow: "Your library",
+    title: "No recordings yet",
+    text: "When a meeting is recorded, it will appear here under its meeting name.",
+    icon: Clapperboard,
+  },
+};
+
+const EmptyState = ({ type }: { type: CallListProps["type"] }) => {
+  const content = emptyStateContent[type];
+  const Icon = content.icon;
+  return (
+    <div className="flex min-h-64 flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 bg-[#1b1e25]/70 px-6 py-14 text-center">
+      <div className="flex size-14 items-center justify-center rounded-2xl bg-[#8AB4F8]/10 text-[#AECBFA]">
+        <Icon className="size-6" />
+      </div>
+      <p className="mt-5 text-xs font-medium uppercase tracking-[0.16em] text-[#8B909A]">{content.eyebrow}</p>
+      <h2 className="mt-2 text-xl font-medium text-[#E8EAED]">{content.title}</h2>
+      <p className="mt-2 max-w-md text-sm leading-relaxed text-[#9AA0A6]">{content.text}</p>
     </div>
   );
 };

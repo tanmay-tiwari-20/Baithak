@@ -15,7 +15,7 @@ const MeetingPage = () => {
   const params = useParams();
   const id = (params?.id as string) || "";
   const { isLoaded, user } = useUser();
-  const { call, isCallLoading } = useGetCallById(id);
+  const { call, isCallLoading, loadError } = useGetCallById(id);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
 
   if (!isLoaded || isCallLoading)
@@ -26,8 +26,8 @@ const MeetingPage = () => {
       </div>
     );
 
-  if (!call)
-    return <Alert title="Call Not Found or Expired" />;
+  if (loadError) return <Alert title="Unable to load this meeting" />;
+  if (!call) return <Alert title="Meeting not found" />;
 
   const isUserAllowed =
     call.type !== "invited" ||
