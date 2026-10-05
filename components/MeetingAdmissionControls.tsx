@@ -11,13 +11,14 @@ const MeetingAdmissionControls = ({ compact = false }: { compact?: boolean }) =>
   const [busyUserId, setBusyUserId] = useState<string>();
   const [isToggling, setIsToggling] = useState(false);
   const { toast } = useToast();
+  const callType = call?.type === "baithak" || call?.type === "default" ? call.type : undefined;
 
-  if (!call || (call.type !== "baithak" && call.type !== "default") || !isHost) return null;
+  if (!call || !callType || !isHost) return null;
 
   const toggleAccess = async () => {
     setIsToggling(true);
     try {
-      await setMeetingQuickAccess(call.id, !quickAccess, call.type);
+      await setMeetingQuickAccess(call.id, !quickAccess, callType);
       toast({ title: quickAccess ? "Meeting locked" : "Meeting opened" });
     } catch (error) {
       console.error("Unable to change meeting access", error);
@@ -30,7 +31,7 @@ const MeetingAdmissionControls = ({ compact = false }: { compact?: boolean }) =>
   const respond = async (userId: string, approved: boolean) => {
     setBusyUserId(userId);
     try {
-      await respondToMeetingAdmission(call.id, userId, approved, call.type);
+      await respondToMeetingAdmission(call.id, userId, approved, callType);
       toast({ title: approved ? "Guest admitted" : "Request declined" });
     } catch (error) {
       console.error("Unable to update join request", error);
