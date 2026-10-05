@@ -92,6 +92,8 @@ export const ensureBaithakCallType = async () => {
   ] as const;
   const returnedQuality = defaults.settings.broadcasting.rtmp.quality;
   const rtmpQuality = supportedRtmpQualities.find((quality) => quality === returnedQuality) || "720p";
+  // The SDK response model widens several request enums to `string`; these
+  // values came from Stream's valid defaults, with RTMP normalized above.
   const settings = {
     ...defaults.settings,
     broadcasting: {
@@ -101,7 +103,7 @@ export const ensureBaithakCallType = async () => {
         quality: rtmpQuality,
       },
     },
-  } satisfies CallSettingsRequest;
+  } as unknown as CallSettingsRequest;
 
   if (callTypes[BAITHAK_CALL_TYPE]) {
     await client.video.updateCallType({
