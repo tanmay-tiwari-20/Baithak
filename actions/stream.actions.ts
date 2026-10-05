@@ -1,7 +1,7 @@
 "use server";
 
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
-import { StreamClient } from "@stream-io/node-sdk";
+import { StreamClient, type CallSettingsRequest } from "@stream-io/node-sdk";
 import { createMeetingCode } from "@/lib/meeting-code";
 
 const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
@@ -75,18 +75,46 @@ export const ensureBaithakCallType = async () => {
     ]),
   );
 
+  // Stream returns RTMP quality as an arbitrary string, while its request type
+  // only accepts a fixed set of values. Keep supported settings and normalize
+  // any unexpected server value before sending the defaults back.
+  const supportedRtmpQualities = [
+    "360p",
+    "480p",
+    "720p",
+    "1080p",
+    "1440p",
+    "portrait-360x640",
+    "portrait-480x854",
+    "portrait-720x1280",
+    "portrait-1080x1920",
+    "portrait-1440x2560",
+  ] as const;
+  const returnedQuality = defaults.settings.broadcasting.rtmp.quality;
+  const rtmpQuality = supportedRtmpQualities.find((quality) => quality === returnedQuality) || "720p";
+  const settings = {
+    ...defaults.settings,
+    broadcasting: {
+      ...defaults.settings.broadcasting,
+      rtmp: {
+        ...defaults.settings.broadcasting.rtmp,
+        quality: rtmpQuality,
+      },
+    },
+  } satisfies CallSettingsRequest;
+
   if (callTypes[BAITHAK_CALL_TYPE]) {
     await client.video.updateCallType({
       name: BAITHAK_CALL_TYPE,
       grants,
-      settings: defaults.settings,
+      settings,
     });
   } else {
     try {
       await client.video.createCallType({
         name: BAITHAK_CALL_TYPE,
         grants,
-        settings: defaults.settings,
+        settings,
       });
     } catch (error) {
       // Another request may have created the type at the same time.
@@ -95,7 +123,7 @@ export const ensureBaithakCallType = async () => {
       await client.video.updateCallType({
         name: BAITHAK_CALL_TYPE,
         grants,
-        settings: defaults.settings,
+        settings,
       });
     }
   }
