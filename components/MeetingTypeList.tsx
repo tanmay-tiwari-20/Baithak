@@ -24,7 +24,6 @@ import {
   Clock,
   PlaySquare,
   Copy,
-  Check,
 } from "lucide-react";
 import { createMeetingCode, getMeetingIdFromInput } from "@/lib/meeting-code";
 import { ensureBaithakCallType } from "@/actions/stream.actions";
