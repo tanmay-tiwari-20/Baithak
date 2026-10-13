@@ -22,7 +22,7 @@
 body {
   background-color: #202124;
   color: #E8EAED;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   overflow-x: hidden;
 }
 
@@ -574,5 +574,330 @@ body {
 
   .flex-between {
     @apply flex justify-between items-center;
+  }
+}
+
+/* ======== Premium meeting room ========
+   The Stream layouts are intentionally kept as the rendering source of truth.
+   These rules only give the current page a fluid stage and let the tile grid
+   respond to the number of visible participants and the viewport. */
+
+.meeting-room {
+  --meeting-border: rgba(255, 255, 255, 0.09);
+  --meeting-control: #2b313b;
+}
+
+.meeting-room__header,
+.meeting-room__footer {
+  background-color: #0f1115;
+}
+
+.meeting-stage > .str-video__paginated-grid-layout__wrapper,
+.meeting-stage > .str-video__speaker-layout__wrapper {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.meeting-stage .str-video__paginated-grid-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  align-items: stretch;
+  justify-content: stretch;
+  gap: 0;
+  padding: 0;
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group {
+  display: grid !important;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  align-content: stretch;
+  justify-content: stretch;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: clamp(0.4rem, 0.9vw, 0.75rem);
+  padding: clamp(0.5rem, 1vw, 0.9rem);
+  margin: 0;
+  max-width: none;
+}
+
+.meeting-stage .str-video__paginated-grid-layout__group > .str-video__participant-view {
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0;
+  min-height: 0;
+  max-width: none;
+  max-height: none;
+  aspect-ratio: auto !important;
+  grid-column: span 3 !important;
+}
+
+/* Desktop: use a 12-unit grid so the last row can expand evenly. */
+.meeting-stage[data-participants="1"] .str-video__paginated-grid-layout__group {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.meeting-stage[data-participants="1"] .str-video__participant-view,
+.meeting-stage[data-participants="2"] .str-video__participant-view,
+.meeting-stage[data-participants="3"] .str-video__participant-view,
+.meeting-stage[data-participants="4"] .str-video__participant-view {
+  grid-column: span 6 !important;
+}
+
+.meeting-stage[data-participants="1"] .str-video__participant-view {
+  grid-column: 1 / -1 !important;
+}
+
+.meeting-stage[data-participants="2"] .str-video__paginated-grid-layout__group,
+.meeting-stage[data-participants="3"] .str-video__paginated-grid-layout__group,
+.meeting-stage[data-participants="4"] .str-video__paginated-grid-layout__group {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.meeting-stage[data-participants="3"] .str-video__participant-view:last-child {
+  grid-column: 1 / -1 !important;
+}
+
+.meeting-stage[data-participants="5"] .str-video__participant-view:nth-child(4),
+.meeting-stage[data-participants="5"] .str-video__participant-view:nth-child(5),
+.meeting-stage[data-participants="8"] .str-video__participant-view:nth-child(7),
+.meeting-stage[data-participants="8"] .str-video__participant-view:nth-child(8) {
+  grid-column: span 3 !important;
+}
+
+.meeting-stage[data-participants="7"] .str-video__participant-view:last-child {
+  grid-column: span 6 !important;
+}
+
+.meeting-stage[data-participants="10"] .str-video__participant-view:nth-child(9),
+.meeting-stage[data-participants="10"] .str-video__participant-view:nth-child(10) {
+  grid-column: span 6 !important;
+}
+
+.meeting-stage[data-participants="11"] .str-video__participant-view:nth-child(9),
+.meeting-stage[data-participants="11"] .str-video__participant-view:nth-child(10),
+.meeting-stage[data-participants="11"] .str-video__participant-view:nth-child(11) {
+  grid-column: span 4 !important;
+}
+
+.meeting-stage[data-participants="13"] .str-video__participant-view:last-child,
+.meeting-stage[data-participants="14"] .str-video__participant-view:nth-child(13),
+.meeting-stage[data-participants="14"] .str-video__participant-view:nth-child(14),
+.meeting-stage[data-participants="15"] .str-video__participant-view:nth-child(13),
+.meeting-stage[data-participants="15"] .str-video__participant-view:nth-child(14),
+.meeting-stage[data-participants="15"] .str-video__participant-view:nth-child(15) {
+  grid-column: span 4 !important;
+}
+
+.meeting-stage[data-participants="14"] .str-video__participant-view:nth-child(13),
+.meeting-stage[data-participants="14"] .str-video__participant-view:nth-child(14),
+.meeting-stage[data-participants="16"] .str-video__participant-view {
+  grid-column: span 3 !important;
+}
+
+.meeting-stage[data-participants="13"] .str-video__participant-view:last-child {
+  grid-column: 1 / -1 !important;
+}
+
+.meeting-stage .str-video__participant-view {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 0.9rem !important;
+  background-color: #20242c !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.meeting-stage .str-video__participant-view:hover {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.meeting-stage .str-video__participant-view--speaking {
+  border: 2px solid #8ab4f8 !important;
+  box-shadow: 0 0 0 1px rgba(138, 180, 248, 0.22), 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.meeting-stage .str-video__participant-details {
+  bottom: 0.65rem;
+  left: 0.65rem;
+  max-width: calc(100% - 1.3rem);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 0.55rem !important;
+  background-color: rgba(15, 17, 21, 0.88) !important;
+  padding: 0.35rem 0.6rem !important;
+  color: #f1f3f4 !important;
+  backdrop-filter: blur(10px);
+}
+
+.meeting-stage .str-video__participant-details .str-video__participant-details__name {
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.meeting-stage .str-video__speaker-layout {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  gap: 0.65rem;
+  padding: 0.65rem;
+}
+
+.meeting-stage .str-video__speaker-layout__spotlight {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+}
+
+.meeting-stage .str-video__speaker-layout__spotlight > .str-video__participant-view {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  aspect-ratio: auto;
+}
+
+.meeting-stage .str-video__speaker-layout__participants-bar-buttons-wrapper {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+.meeting-stage .str-video__speaker-layout__participants-bar-wrapper .str-video__speaker-layout__participants-bar {
+  gap: 0.5rem;
+}
+
+.meeting-stage .str-video__speaker-layout__participants-bar-wrapper .str-video__speaker-layout__participant-tile {
+  width: clamp(8.5rem, 16vw, 14rem);
+  min-width: clamp(8.5rem, 16vw, 14rem);
+  max-width: none;
+  padding: 0;
+}
+
+.meeting-stage .str-video__speaker-layout__participants-bar .str-video__participant-view {
+  aspect-ratio: 16 / 9;
+}
+
+.meeting-toolbar__icon-button,
+.meeting-toolbar__side-button {
+  border: 1px solid transparent;
+  background-color: var(--meeting-control, #2b313b);
+  color: #e8eaed;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.meeting-toolbar__icon-button:hover,
+.meeting-toolbar__side-button:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  background-color: #363d49;
+}
+
+.meeting-toolbar__side-button--active {
+  border-color: rgba(138, 180, 248, 0.35);
+  background-color: rgba(138, 180, 248, 0.12);
+  color: #a8c7f5;
+}
+
+@media (max-width: 700px) {
+  .meeting-stage {
+    border-radius: 1rem;
+  }
+
+  .meeting-stage .str-video__paginated-grid-layout__group {
+    gap: 0.45rem;
+    padding: 0.45rem;
+  }
+
+  .meeting-stage[data-participants="1"] .str-video__paginated-grid-layout__group {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .meeting-stage[data-participants="2"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="3"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="4"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="5"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="6"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="7"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="8"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="9"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="10"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="11"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="12"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="13"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="14"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="15"] .str-video__paginated-grid-layout__group,
+  .meeting-stage[data-participants="16"] .str-video__paginated-grid-layout__group {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .meeting-stage[data-participants="2"] .str-video__participant-view,
+  .meeting-stage[data-participants="3"] .str-video__participant-view,
+  .meeting-stage[data-participants="4"] .str-video__participant-view,
+  .meeting-stage[data-participants="5"] .str-video__participant-view,
+  .meeting-stage[data-participants="6"] .str-video__participant-view,
+  .meeting-stage[data-participants="7"] .str-video__participant-view,
+  .meeting-stage[data-participants="8"] .str-video__participant-view,
+  .meeting-stage[data-participants="9"] .str-video__participant-view,
+  .meeting-stage[data-participants="10"] .str-video__participant-view,
+  .meeting-stage[data-participants="11"] .str-video__participant-view,
+  .meeting-stage[data-participants="12"] .str-video__participant-view,
+  .meeting-stage[data-participants="13"] .str-video__participant-view,
+  .meeting-stage[data-participants="14"] .str-video__participant-view,
+  .meeting-stage[data-participants="15"] .str-video__participant-view,
+  .meeting-stage[data-participants="16"] .str-video__participant-view {
+    grid-column: span 1 !important;
+  }
+
+  .meeting-stage[data-participants="3"] .str-video__participant-view:last-child,
+  .meeting-stage[data-participants="5"] .str-video__participant-view:last-child,
+  .meeting-stage[data-participants="7"] .str-video__participant-view:last-child,
+  .meeting-stage[data-participants="9"] .str-video__participant-view:last-child,
+  .meeting-stage[data-participants="11"] .str-video__participant-view:last-child,
+  .meeting-stage[data-participants="13"] .str-video__participant-view:last-child,
+  .meeting-stage[data-participants="15"] .str-video__participant-view:last-child {
+    grid-column: 1 / -1 !important;
+  }
+
+  .meeting-stage .str-video__participant-details {
+    bottom: 0.4rem;
+    left: 0.4rem;
+    max-width: calc(100% - 0.8rem);
+    padding: 0.25rem 0.45rem !important;
+  }
+
+  .meeting-stage .str-video__speaker-layout {
+    gap: 0.45rem;
+    padding: 0.45rem;
+  }
+
+  .meeting-stage .str-video__speaker-layout__participants-bar-wrapper .str-video__speaker-layout__participant-tile {
+    width: 8rem;
+    min-width: 8rem;
+  }
+
+  .meeting-panel {
+    top: auto !important;
+    right: 0.5rem !important;
+    bottom: 0.5rem !important;
+    left: 0.5rem;
+    width: auto !important;
+    max-height: min(70%, 32rem);
+  }
+}
+
+@media (max-width: 700px) and (orientation: landscape) {
+  .meeting-stage[data-participants="2"] .str-video__paginated-grid-layout__group {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .meeting-stage[data-participants="2"] .str-video__participant-view {
+    grid-column: span 1 !important;
   }
 }

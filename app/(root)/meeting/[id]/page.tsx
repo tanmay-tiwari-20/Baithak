@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react";
 
 import { useGetCallById } from "@/hooks/useGetCallById";
 import Alert from "@/components/Alert";
+import BaithakLogo from "@/components/BaithakLogo";
 import MeetingSetup from "@/components/MeetingSetup";
 import MeetingRoom from "@/components/MeetingRoom";
 
@@ -20,10 +21,14 @@ const MeetingPage = () => {
 
   if (!isLoaded || isCallLoading)
     return (
-      <div className="flex flex-col h-screen w-full items-center justify-center bg-[#202124] text-[#E8EAED] gap-4">
-        <Loader2 className="w-10 h-10 text-[#8AB4F8] animate-spin" />
-        <p className="text-sm text-[#9AA0A6]">Joining Baithak...</p>
-      </div>
+      <main className="flex min-h-dvh w-full items-center justify-center bg-[#101216] px-6 text-[#E8EAED]">
+        <div className="flex w-full max-w-sm flex-col items-center rounded-[1.75rem] border border-white/[0.09] bg-[#181b22] px-8 py-10 text-center shadow-2xl shadow-black/30" role="status" aria-live="polite">
+          <BaithakLogo size={34} />
+          <Loader2 className="mt-10 size-8 animate-spin text-[#AECBFA]" />
+          <p className="mt-5 text-sm font-medium text-[#E8EAED]">Preparing your meeting</p>
+          <p className="mt-2 text-xs leading-5 text-[#8B909A]">Checking the room and your access before opening the preview.</p>
+        </div>
+      </main>
     );
 
   if (loadError) return <Alert title="Unable to load this meeting" />;
@@ -37,7 +42,7 @@ const MeetingPage = () => {
     return <Alert title="You are not allowed to join this meeting" />;
 
   return (
-    <main className="h-screen w-full bg-[#202124]">
+    <main className="min-h-dvh w-full bg-[#101216]">
       <StreamCall call={call}>
         <StreamTheme>
           {!isSetupComplete ? (

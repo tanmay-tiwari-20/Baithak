@@ -35,26 +35,26 @@ const MobileNav = () => {
         <SheetTrigger asChild>
           <button
             title="Menu"
-            className="w-10 h-10 rounded-full flex items-center justify-center text-[#9AA0A6] hover:text-[#E8EAED] hover:bg-[#303134] transition-colors"
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-[#9AA0A6] transition-colors hover:bg-[#303134] hover:text-[#E8EAED] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8]"
           >
             <Menu className="w-6 h-6" />
           </button>
         </SheetTrigger>
         <SheetContent
           side="left"
-          className="border-r border-[#3C4043] bg-[#202124] p-6 text-[#E8EAED]"
+          className="border-r border-[#3C4043] bg-[#1A1B1E] p-5 text-[#E8EAED] sm:p-6"
           aria-describedby={undefined}
         >
           <VisuallyHidden>
             <h2>Navigation Menu</h2>
           </VisuallyHidden>
           
-          <div className="pb-6 border-b border-[#3C4043]">
+           <div className="border-b border-[#3C4043] pb-6">
             <BaithakLogo size={32} textClassName="text-xl font-normal" />
           </div>
 
           <div className="flex h-[calc(100vh-100px)] flex-col justify-between pt-6 overflow-y-auto">
-            <section className="flex flex-col gap-2">
+             <section className="flex flex-col gap-1.5">
               {sidebarLinks.map((item) => {
                 const isActive =
                   pathname === item.route ||
@@ -65,10 +65,10 @@ const MobileNav = () => {
                     <Link
                       href={item.route}
                       className={cn(
-                        "flex items-center gap-4 px-4 py-3 rounded-full text-sm font-medium transition-colors",
+                        "flex items-center gap-4 rounded-xl border px-4 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8]",
                         isActive
-                          ? "bg-[#303134] text-[#8AB4F8]"
-                          : "text-[#BDC1C6] hover:bg-[#28292C] hover:text-[#E8EAED]"
+                          ? "border-[#3C4043] bg-[#28292C] text-[#AECBFA]"
+                          : "border-transparent text-[#BDC1C6] hover:border-[#303134] hover:bg-[#202124] hover:text-[#E8EAED]"
                       )}
                     >
                       {iconMap[item.label] || <Home className="w-5 h-5" />}
@@ -79,7 +79,7 @@ const MobileNav = () => {
               })}
             </section>
 
-            <div className="p-4 rounded-xl bg-[#28292C] border border-[#3C4043] text-xs text-[#9AA0A6] text-center">
+             <div className="rounded-xl border border-[#3C4043] bg-[#202124] p-4 text-center text-xs text-[#9AA0A6]">
               Baithak Video Collaboration
             </div>
           </div>

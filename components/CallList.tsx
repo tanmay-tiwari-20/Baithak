@@ -48,7 +48,7 @@ const CallList = ({ type, refreshKey = 0 }: CallListProps) => {
         type="button"
         onClick={() => setManualRefreshKey((key) => key + 1)}
         disabled={isLoading || isLoadingRecordings}
-        className="inline-flex h-9 items-center gap-2 rounded-full border border-white/10 px-3 text-xs font-medium text-[#BEC2CB] transition-colors hover:bg-white/[0.06] disabled:opacity-50"
+        className="inline-flex h-9 items-center gap-2 rounded-lg border border-[#3C4043] px-3 text-xs font-medium text-[#BEC2CB] transition-colors hover:bg-[#303134] hover:text-[#E8EAED] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8]"
       >
         <RefreshCw className={`size-3.5 ${isLoading || isLoadingRecordings ? "animate-spin" : ""}`} />
         Refresh
@@ -211,8 +211,8 @@ const EmptyState = ({ type }: { type: CallListProps["type"] }) => {
   const content = emptyStateContent[type];
   const Icon = content.icon;
   return (
-    <div className="flex min-h-64 flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 bg-[#1b1e25]/70 px-6 py-14 text-center">
-      <div className="flex size-14 items-center justify-center rounded-2xl bg-[#8AB4F8]/10 text-[#AECBFA]">
+    <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-[#3C4043] bg-[#202124] px-6 py-14 text-center">
+      <div className="flex size-14 items-center justify-center rounded-xl border border-[#3C4043] bg-[#28292C] text-[#AECBFA]">
         <Icon className="size-6" />
       </div>
       <p className="mt-5 text-xs font-medium uppercase tracking-[0.16em] text-[#8B909A]">{content.eyebrow}</p>

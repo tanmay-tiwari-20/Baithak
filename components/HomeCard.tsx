@@ -3,7 +3,7 @@ import Image from "next/image";
 import React from "react";
 
 interface HomeCardProps {
-  className: string;
+  className?: string;
   img: string;
   title: string;
   description: string;
@@ -18,23 +18,27 @@ const HomeCard = ({
   handleClick,
 }: HomeCardProps) => {
   return (
-    <div
-      className={cn('px-4 py-6 flex flex-col justify-between w-full xl:max-w-[270px] min-h-[260px] rounded-[14px] cursor-pointer', className)}
+    <button
+      type="button"
+      className={cn(
+        "flex min-h-[220px] w-full cursor-pointer flex-col justify-between rounded-2xl border border-[#3C4043] bg-[#28292C] px-5 py-6 text-left transition-colors hover:border-[#5F6368] hover:bg-[#303134] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8] xl:max-w-[270px]",
+        className,
+      )}
       onClick={handleClick}
     >
-      <div className="flex-center glassmorphism size-12 rounded-[10px]">
+      <div className="flex size-11 items-center justify-center rounded-xl border border-[#3C4043] bg-[#202124]">
         <Image
           src={img}
-          alt="meeting"
+          alt=""
           width={27}
           height={27}
         />
       </div>
       <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold">{title}</h1>
-        <p className="text-lg font-normal">{description}</p>
+        <h2 className="text-lg font-medium text-[#E8EAED]">{title}</h2>
+        <p className="text-sm leading-6 text-[#9AA0A6]">{description}</p>
       </div>
-    </div>
+    </button>
   );
 };
 

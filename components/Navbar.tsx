@@ -22,34 +22,31 @@ const Navbar = () => {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-[#202124] border-b border-[#3C4043] px-4 md:px-6 flex items-center justify-between">
-      {/* Left: Minimal Baithak Logo */}
+    <header className="fixed inset-x-0 top-0 z-50 flex h-[72px] items-center justify-between border-b border-[#3C4043] bg-[#1A1B1E] px-4 md:px-7">
       <div className="flex items-center gap-4">
-        <BaithakLogo size={32} textClassName="text-xl font-normal" />
+        <BaithakLogo size={32} textClassName="text-xl font-medium" />
       </div>
 
-        {/* Right: Clock + User */}
-      <div className="flex items-center gap-2 sm:gap-4">
+      <div className="flex items-center gap-2 sm:gap-5">
         {timeStr && (
-          <span className="hidden md:inline-block text-sm font-normal text-[#9AA0A6] select-none pr-2">
+          <span className="hidden select-none border-r border-[#3C4043] pr-5 text-xs font-medium tracking-wide text-[#9AA0A6] md:inline-block">
             {timeStr}
           </span>
         )}
 
         <SignedIn>
-          <div className="flex items-center pl-2">
+          <div className="flex items-center">
             <UserButton
               appearance={{
                 elements: {
-                  avatarBox: "w-8 h-8 rounded-full border border-[#3C4043]",
+                  avatarBox: "h-9 w-9 rounded-full border border-[#5F6368]",
                 },
               }}
             />
           </div>
         </SignedIn>
 
-        {/* Mobile Navigation Trigger */}
-        <div className="sm:hidden flex items-center">
+        <div className="flex items-center sm:hidden">
           <MobileNav />
         </div>
       </div>

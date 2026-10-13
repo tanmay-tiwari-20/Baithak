@@ -156,38 +156,36 @@ const MeetingTypeList = () => {
   const laterMeetingLink = `${baseUrl}/meeting/${createdLaterCall?.id}`;
 
   return (
-    <div className="space-y-10">
-      {/* Google Meet Signature Action Row: [ + New meeting ] & [ ⌨️ Enter a code or link ] */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 max-w-2xl">
-        {/* + New meeting Dropdown */}
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 gap-3 xl:grid-cols-[auto_minmax(0,1fr)] xl:items-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white font-medium text-sm transition-colors shadow-sm select-none">
-              <Video className="w-5 h-5" />
+            <button className="inline-flex h-12 items-center justify-center gap-2.5 rounded-xl bg-[#1A73E8] px-5 text-sm font-medium text-white transition-colors hover:bg-[#1557B0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1B1E]">
+              <Video className="size-5" />
               <span>New meeting</span>
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="start"
-            className="w-72 bg-[#28292C] border border-[#3C4043] text-[#E8EAED] rounded-xl p-1.5 shadow-xl"
+            className="w-72 rounded-xl border border-[#3C4043] bg-[#28292C] p-1.5 text-[#E8EAED] shadow-xl"
           >
             <DropdownMenuItem
               onClick={createMeetingForLater}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm cursor-pointer hover:bg-[#303134] focus:bg-[#303134] text-[#E8EAED]"
+              className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#E8EAED] hover:bg-[#303134] focus:bg-[#303134]"
             >
               <LinkIcon className="w-4 h-4 text-[#8AB4F8]" />
               <span>Create a meeting for later</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => setMeetingState("isInstantMeeting")}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm cursor-pointer hover:bg-[#303134] focus:bg-[#303134] text-[#E8EAED]"
+              className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#E8EAED] hover:bg-[#303134] focus:bg-[#303134]"
             >
               <Plus className="w-4 h-4 text-[#8AB4F8]" />
               <span>Start an instant meeting</span>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => setMeetingState("isScheduleMeeting")}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm cursor-pointer hover:bg-[#303134] focus:bg-[#303134] text-[#E8EAED]"
+              className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-[#E8EAED] hover:bg-[#303134] focus:bg-[#303134]"
             >
               <Calendar className="w-4 h-4 text-[#8AB4F8]" />
               <span>Schedule in Baithak Calendar</span>
@@ -195,38 +193,37 @@ const MeetingTypeList = () => {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Enter a code or link input field */}
-        <div className="flex flex-1 items-center gap-2">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
           <div className="relative flex-1">
-            <Keyboard className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9AA0A6]" />
+            <Keyboard className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#9AA0A6]" />
             <Input
               type="text"
               placeholder="Enter a code or link"
               value={values.link}
               onChange={(e) => setValues({ ...values, link: e.target.value })}
               onKeyDown={(e) => e.key === "Enter" && cleanAndJoinLink()}
-              className="w-full pl-10 pr-4 py-3 rounded-full bg-transparent border border-[#5F6368] focus-visible:border-[#8AB4F8] focus-visible:ring-1 focus-visible:ring-[#8AB4F8] text-[#E8EAED] placeholder:text-[#9AA0A6] text-sm h-12"
+              className="h-12 w-full rounded-xl border border-[#5F6368] bg-[#202124] pl-10 pr-4 text-sm text-[#E8EAED] placeholder:text-[#9AA0A6] focus-visible:border-[#8AB4F8] focus-visible:ring-1 focus-visible:ring-[#8AB4F8]"
             />
           </div>
           <button
+            type="button"
             onClick={cleanAndJoinLink}
             disabled={!values.link.trim() || isSubmitting}
-            className="px-5 py-3 rounded-full text-sm font-medium transition-colors disabled:text-[#5F6368] disabled:cursor-not-allowed text-[#8AB4F8] hover:bg-[#303134]"
+            className="h-12 rounded-xl border border-[#3C4043] px-5 text-sm font-medium text-[#AECBFA] transition-colors hover:bg-[#303134] disabled:cursor-not-allowed disabled:text-[#5F6368] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8]"
           >
             {isSubmitting ? "Joining…" : "Join"}
           </button>
         </div>
       </div>
 
-      {/* Minimal Google Workspace Action Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
-        {/* Card 1: Start Instant */}
-        <div
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <button
+          type="button"
           onClick={() => setMeetingState("isInstantMeeting")}
-          className="p-5 rounded-2xl bg-[#28292C] border border-[#3C4043] hover:bg-[#303134] hover:border-[#5F6368] transition-all cursor-pointer flex flex-col justify-between h-44 group"
+          className="group flex min-h-[156px] cursor-pointer flex-col justify-between rounded-2xl border border-[#3C4043] bg-[#28292C] p-5 text-left transition-colors hover:border-[#5F6368] hover:bg-[#303134] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8]"
         >
-          <div className="w-10 h-10 rounded-full bg-[#1A73E8]/20 flex items-center justify-center text-[#8AB4F8]">
-            <Video className="w-5 h-5" />
+          <div className="flex size-10 items-center justify-center rounded-xl border border-[#3C4043] bg-[#202124] text-[#AECBFA]">
+            <Video className="size-5" />
           </div>
           <div>
             <h3 className="text-base font-medium text-[#E8EAED] group-hover:text-white">
@@ -236,15 +233,15 @@ const MeetingTypeList = () => {
               Start a call right now with one click
             </p>
           </div>
-        </div>
+        </button>
 
-        {/* Card 2: Schedule Meeting */}
-        <div
+        <button
+          type="button"
           onClick={() => setMeetingState("isScheduleMeeting")}
-          className="p-5 rounded-2xl bg-[#28292C] border border-[#3C4043] hover:bg-[#303134] hover:border-[#5F6368] transition-all cursor-pointer flex flex-col justify-between h-44 group"
+          className="group flex min-h-[156px] cursor-pointer flex-col justify-between rounded-2xl border border-[#3C4043] bg-[#28292C] p-5 text-left transition-colors hover:border-[#5F6368] hover:bg-[#303134] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8]"
         >
-          <div className="w-10 h-10 rounded-full bg-[#1A73E8]/20 flex items-center justify-center text-[#8AB4F8]">
-            <Calendar className="w-5 h-5" />
+          <div className="flex size-10 items-center justify-center rounded-xl border border-[#3C4043] bg-[#202124] text-[#AECBFA]">
+            <Calendar className="size-5" />
           </div>
           <div>
             <h3 className="text-base font-medium text-[#E8EAED] group-hover:text-white">
@@ -254,15 +251,15 @@ const MeetingTypeList = () => {
               Plan your calls with date and time
             </p>
           </div>
-        </div>
+        </button>
 
-        {/* Card 3: Upcoming Calls */}
-        <div
+        <button
+          type="button"
           onClick={() => router.push("/upcoming")}
-          className="p-5 rounded-2xl bg-[#28292C] border border-[#3C4043] hover:bg-[#303134] hover:border-[#5F6368] transition-all cursor-pointer flex flex-col justify-between h-44 group"
+          className="group flex min-h-[156px] cursor-pointer flex-col justify-between rounded-2xl border border-[#3C4043] bg-[#28292C] p-5 text-left transition-colors hover:border-[#5F6368] hover:bg-[#303134] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8]"
         >
-          <div className="w-10 h-10 rounded-full bg-[#1A73E8]/20 flex items-center justify-center text-[#8AB4F8]">
-            <Clock className="w-5 h-5" />
+          <div className="flex size-10 items-center justify-center rounded-xl border border-[#3C4043] bg-[#202124] text-[#AECBFA]">
+            <Clock className="size-5" />
           </div>
           <div>
             <h3 className="text-base font-medium text-[#E8EAED] group-hover:text-white">
@@ -272,15 +269,15 @@ const MeetingTypeList = () => {
               View all scheduled appointments
             </p>
           </div>
-        </div>
+        </button>
 
-        {/* Card 4: Recordings */}
-        <div
+        <button
+          type="button"
           onClick={() => router.push("/recordings")}
-          className="p-5 rounded-2xl bg-[#28292C] border border-[#3C4043] hover:bg-[#303134] hover:border-[#5F6368] transition-all cursor-pointer flex flex-col justify-between h-44 group"
+          className="group flex min-h-[156px] cursor-pointer flex-col justify-between rounded-2xl border border-[#3C4043] bg-[#28292C] p-5 text-left transition-colors hover:border-[#5F6368] hover:bg-[#303134] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8]"
         >
-          <div className="w-10 h-10 rounded-full bg-[#1A73E8]/20 flex items-center justify-center text-[#8AB4F8]">
-            <PlaySquare className="w-5 h-5" />
+          <div className="flex size-10 items-center justify-center rounded-xl border border-[#3C4043] bg-[#202124] text-[#AECBFA]">
+            <PlaySquare className="size-5" />
           </div>
           <div>
             <h3 className="text-base font-medium text-[#E8EAED] group-hover:text-white">
@@ -290,7 +287,7 @@ const MeetingTypeList = () => {
               Play and review past recorded calls
             </p>
           </div>
-        </div>
+        </button>
       </div>
 
       {/* Modal: Schedule Meeting */}

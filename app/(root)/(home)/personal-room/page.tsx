@@ -10,7 +10,7 @@ import { User, Copy, Check, Video, ShieldCheck, Link2, ArrowUpRight } from "luci
 import { ensureBaithakCallType, getOrCreatePersonalRoomCode } from "@/actions/stream.actions";
 
 const InfoRow = ({ label, value, monospace = false }: { label: string; value: string; monospace?: boolean }) => (
-  <div className="flex flex-col gap-2 border-b border-white/[0.07] py-4 sm:flex-row sm:items-center sm:justify-between">
+  <div className="flex flex-col gap-2 border-b border-[#3C4043] py-4 sm:flex-row sm:items-center sm:justify-between">
     <span className="text-xs font-medium text-[#9AA0A6] uppercase tracking-wider min-w-[140px]">
       {label}
     </span>
@@ -113,9 +113,9 @@ const PersonalRoom = () => {
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 text-[#E8EAED]">
-      <div className="rounded-3xl border border-white/[0.07] bg-gradient-to-br from-[#242831] to-[#1b1e25] p-6 sm:p-8">
+      <div className="rounded-2xl border border-[#3C4043] bg-[#202124] p-6 sm:p-8">
         <div className="flex items-start gap-4">
-          <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#8AB4F8]/10 text-[#AECBFA]">
+          <div className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-[#3C4043] bg-[#28292C] text-[#AECBFA]">
             <User className="size-6" />
           </div>
           <div>
@@ -130,10 +130,10 @@ const PersonalRoom = () => {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-3xl border border-white/[0.08] bg-[#1c1f27] shadow-xl shadow-black/10">
-        <div className="flex flex-col gap-5 border-b border-white/[0.07] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+      <div className="overflow-hidden rounded-2xl border border-[#3C4043] bg-[#202124]">
+        <div className="flex flex-col gap-5 border-b border-[#3C4043] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#8AB4F8]/10 text-[#AECBFA]">
+             <div className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-[#3C4043] bg-[#28292C] text-[#AECBFA]">
               <User className="size-5" />
             </div>
             <div className="min-w-0">
@@ -150,7 +150,7 @@ const PersonalRoom = () => {
             value={roomCode || (isLoadingRoomCode ? "Creating your room code…" : "Unavailable")}
             monospace
           />
-          <div className="flex flex-col gap-2 border-b border-white/[0.07] py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-2 border-b border-[#3C4043] py-4 sm:flex-row sm:items-center sm:justify-between">
             <span className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-[#9AA0A6]">
               <Link2 className="size-4" /> Invitation link
             </span>
@@ -174,7 +174,7 @@ const PersonalRoom = () => {
             onClick={copyLink}
             disabled={!user || !roomCode}
             variant="outline"
-            className="h-11 w-full rounded-full border-white/15 bg-transparent px-6 text-[#DADCE0] hover:bg-white/[0.06] sm:w-auto"
+            className="h-11 w-full rounded-xl border-[#5F6368] bg-transparent px-6 text-[#DADCE0] hover:bg-[#303134] sm:w-auto"
           >
             {copied ? <Check className="mr-2 size-4 text-[#AECBFA]" /> : <Copy className="mr-2 size-4" />}
             {copied ? "Copied" : "Copy invitation"}
@@ -182,7 +182,7 @@ const PersonalRoom = () => {
         </div>
       </div>
 
-      <div className="flex items-start gap-3 rounded-2xl border border-white/[0.06] bg-[#1b1e25]/70 p-4 text-xs leading-relaxed text-[#9AA0A6] sm:p-5">
+       <div className="flex items-start gap-3 rounded-xl border border-[#3C4043] bg-[#202124] p-4 text-xs leading-relaxed text-[#9AA0A6] sm:p-5">
         <ShieldCheck className="mt-0.5 size-4 shrink-0 text-[#8AB4F8]" />
         <span>Guests use the shared link to request access. You can admit them from the room’s host controls.</span>
       </div>

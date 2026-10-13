@@ -47,11 +47,11 @@ const MeetingCard = ({ title, date, kind, actionText, handleClick, link }: Meeti
   };
 
   return (
-    <article className="group flex min-h-[218px] flex-col justify-between rounded-3xl border border-white/[0.08] bg-[#1c1f27] p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-white/[0.16] hover:bg-[#20242d] sm:p-6">
-      <div className="space-y-5">
+    <article className="group flex min-h-[218px] flex-col justify-between rounded-2xl border border-[#3C4043] bg-[#202124] p-5 transition-colors duration-200 hover:border-[#5F6368] hover:bg-[#28292C] sm:p-6">
+      <div className="space-y-6">
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-[#8AB4F8]/10 text-[#AECBFA]">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-[#3C4043] bg-[#28292C] text-[#AECBFA]">
               <Icon className="size-5" />
             </span>
             <div className="min-w-0">
@@ -63,7 +63,7 @@ const MeetingCard = ({ title, date, kind, actionText, handleClick, link }: Meeti
             onClick={copyLink}
             title={kind === "recording" ? "Copy recording link" : "Copy meeting link"}
             aria-label={kind === "recording" ? "Copy recording link" : "Copy meeting link"}
-            className="flex size-9 shrink-0 items-center justify-center rounded-full text-[#9AA0A6] transition-colors hover:bg-white/[0.07] hover:text-[#E8EAED]"
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg text-[#9AA0A6] transition-colors hover:bg-[#303134] hover:text-[#E8EAED] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8]"
           >
             {copied ? <Check className="size-4 text-[#AECBFA]" /> : <Copy className="size-4" />}
           </button>
@@ -78,12 +78,12 @@ const MeetingCard = ({ title, date, kind, actionText, handleClick, link }: Meeti
         </div>
       </div>
 
-      <div className="mt-5 flex items-center justify-between gap-3 border-t border-white/[0.07] pt-4">
+      <div className="mt-5 flex items-center justify-between gap-3 border-t border-[#3C4043] pt-4">
         <span className="truncate text-xs text-[#747984]">{kind === "recording" ? "Saved meeting recording" : "Baithak meeting room"}</span>
         {actionText && (
           <Button
             onClick={handleClick}
-            className="h-9 shrink-0 rounded-full bg-[#8AB4F8] px-4 text-xs font-medium text-[#111318] hover:bg-[#AECBFA]"
+            className="h-9 shrink-0 rounded-lg bg-[#8AB4F8] px-4 text-xs font-medium text-[#111318] hover:bg-[#AECBFA] focus-visible:ring-2 focus-visible:ring-[#8AB4F8] focus-visible:ring-offset-2 focus-visible:ring-offset-[#202124]"
           >
             {kind === "recording" && <Download className="mr-1.5 size-3.5" />}
             {actionText}

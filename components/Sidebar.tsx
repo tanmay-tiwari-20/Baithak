@@ -27,8 +27,11 @@ const Sidebar = () => {
   const pathname = usePathname();
 
   return (
-    <aside className="sticky left-0 top-0 flex h-screen w-fit flex-col justify-between bg-[#202124] border-r border-[#3C4043] p-4 pt-24 text-[#E8EAED] max-sm:hidden lg:w-64 select-none">
+    <aside className="sticky left-0 top-0 flex h-screen w-fit flex-col justify-between border-r border-[#3C4043] bg-[#1A1B1E] p-3 pt-24 text-[#E8EAED] max-sm:hidden lg:w-64 lg:p-4 lg:pt-24">
       <div className="flex flex-1 flex-col gap-1.5">
+        <p className="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#747984] max-lg:hidden">
+          Workspace
+        </p>
         {sidebarLinks.map((link) => {
           const isActive =
             pathname === link.route || (link.route !== "/" && pathname.startsWith(link.route));
@@ -38,10 +41,10 @@ const Sidebar = () => {
               href={link.route}
               key={link.label}
               className={cn(
-                "flex items-center gap-3.5 px-4 py-3 rounded-full text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-xl border px-3 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8] max-lg:justify-center",
                 isActive
-                  ? "bg-[#303134] text-[#8AB4F8]"
-                  : "text-[#BDC1C6] hover:bg-[#28292C] hover:text-[#E8EAED]"
+                  ? "border-[#3C4043] bg-[#28292C] text-[#AECBFA]"
+                  : "border-transparent text-[#BDC1C6] hover:border-[#303134] hover:bg-[#202124] hover:text-[#E8EAED]"
               )}
             >
               {iconMap[link.label] || <Home className="w-5 h-5" />}
@@ -51,8 +54,7 @@ const Sidebar = () => {
         })}
       </div>
 
-      {/* Bottom Security / Status Footer */}
-      <div className="max-lg:hidden p-3 rounded-xl bg-[#28292C] border border-[#3C4043] flex items-center gap-2.5 text-xs text-[#9AA0A6]">
+      <div className="max-lg:hidden flex items-center gap-2.5 rounded-xl border border-[#3C4043] bg-[#202124] p-3 text-xs text-[#9AA0A6]">
         <ShieldCheck className="w-4 h-4 text-[#8AB4F8] shrink-0" />
         <span>Share meetings by code or link</span>
       </div>

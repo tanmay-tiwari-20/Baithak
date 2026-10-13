@@ -5,8 +5,8 @@ import React from "react";
 const Previous = () => {
   return (
     <div className="mx-auto max-w-7xl space-y-8 text-[#E8EAED]">
-      <div className="flex items-start gap-4 rounded-3xl border border-white/[0.07] bg-gradient-to-br from-[#242831] to-[#1b1e25] p-6 sm:p-8">
-        <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#8AB4F8]/10 text-[#AECBFA]">
+      <div className="flex items-start gap-4 rounded-2xl border border-[#3C4043] bg-[#202124] p-6 sm:p-8">
+        <div className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-[#3C4043] bg-[#28292C] text-[#AECBFA]">
           <History className="size-6" />
         </div>
         <div>

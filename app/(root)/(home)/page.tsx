@@ -37,68 +37,54 @@ const Home = () => {
   };
 
   return (
-    <section className="flex flex-col gap-12 text-[#E8EAED] max-w-7xl mx-auto py-4">
-      {/* Google Meet Hero Split: Left Action Controls + Right Visual Carousel */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        {/* Left Column: Heading + New Meeting & Code Controls */}
-        <div className="lg:col-span-7 flex flex-col space-y-6">
-          <div className="space-y-3">
-            <h1 className="text-4xl sm:text-5xl font-normal tracking-tight text-[#E8EAED] leading-tight">
-              Video calls and meetings <br />
-              <span className="text-[#8AB4F8]">for everyone</span>
-            </h1>
-            <p className="text-base sm:text-lg text-[#9AA0A6] max-w-xl font-normal leading-relaxed">
-              Connect, collaborate, and celebrate from anywhere with Baithak. High quality video calls with zero friction.
-            </p>
-          </div>
-
-          {/* Action Row & Workspace Cards */}
-          <div className="pt-2">
-            <MeetingTypeList />
-          </div>
-
-          <div className="pt-4 border-t border-[#3C4043] flex items-center gap-2 text-xs text-[#9AA0A6]">
-            <span>Learn more about</span>
-            <span className="text-[#8AB4F8]">
-              Baithak Video Collaboration
-            </span>
-          </div>
+    <section className="mx-auto flex max-w-7xl flex-col gap-8 py-2 text-[#E8EAED]">
+      <div className="grid grid-cols-1 gap-8 border-b border-[#3C4043] pb-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center lg:gap-12">
+        <div className="space-y-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#AECBFA]">
+            Baithak workspace
+          </p>
+          <h1 className="max-w-2xl text-4xl font-medium leading-tight tracking-[-0.03em] text-[#E8EAED] sm:text-5xl">
+            Video calls and meetings <span className="text-[#8AB4F8]">for everyone</span>
+          </h1>
+          <p className="max-w-xl text-base leading-7 text-[#9AA0A6] sm:text-lg">
+            Start a room, schedule a conversation, or join with a meeting code.
+          </p>
         </div>
 
-        {/* Right Column: Google Meet Style Feature Carousel */}
-        <div className="lg:col-span-5 flex flex-col items-center justify-center p-6">
-          <div className="w-full max-w-sm flex flex-col items-center text-center space-y-6">
-            {/* Circular Illustration Frame */}
-            <div className="relative w-44 h-44 rounded-full bg-[#28292C] border border-[#3C4043] flex items-center justify-center transition-all duration-300">
+        <div className="flex min-h-[320px] flex-col items-center justify-center rounded-2xl border border-[#3C4043] bg-[#202124] p-6 sm:p-8">
+          <div className="flex w-full max-w-sm flex-col items-center space-y-6 text-center">
+            <div className="flex size-32 items-center justify-center rounded-full border border-[#3C4043] bg-[#28292C] sm:size-36">
               {carouselItems[slide].icon}
             </div>
 
-            {/* Slide Text */}
-            <div className="space-y-2 min-h-[90px]">
-              <h2 className="text-xl font-medium text-[#E8EAED]">
+            <div className="min-h-[92px] space-y-2">
+              <h2 className="text-lg font-medium text-[#E8EAED] sm:text-xl">
                 {carouselItems[slide].title}
               </h2>
-              <p className="text-sm text-[#9AA0A6] leading-relaxed max-w-xs mx-auto">
+              <p className="mx-auto max-w-xs text-sm leading-6 text-[#9AA0A6]">
                 {carouselItems[slide].description}
               </p>
             </div>
 
-            {/* Carousel Navigation: Dots + Arrows */}
-            <div className="flex items-center gap-4 pt-2">
+            <div className="flex items-center gap-4">
               <button
+                type="button"
                 onClick={prevSlide}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-[#9AA0A6] hover:text-[#E8EAED] hover:bg-[#303134] transition-colors"
-                title="Previous"
+                aria-label="Previous workspace tip"
+                className="flex size-9 items-center justify-center rounded-lg text-[#9AA0A6] transition-colors hover:bg-[#303134] hover:text-[#E8EAED] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8]"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="size-5" />
               </button>
 
-              <div className="flex items-center gap-2">
-                {carouselItems.map((_, idx) => (
+              <div className="flex items-center gap-2" aria-label="Workspace tips">
+                {carouselItems.map((item, idx) => (
                   <button
-                    key={idx}
+                    key={item.title}
+                    type="button"
                     onClick={() => setSlide(idx)}
-                    className={`h-2 rounded-full transition-all ${
+                    aria-label={`Show tip ${idx + 1}`}
+                    aria-current={idx === slide ? "true" : undefined}
+                    className={`h-2 rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8] ${
                       idx === slide ? "w-6 bg-[#8AB4F8]" : "w-2 bg-[#5F6368]"
                     }`}
                   />
@@ -106,15 +92,20 @@ const Home = () => {
               </div>
 
               <button
+                type="button"
                 onClick={nextSlide}
-                className="w-8 h-8 rounded-full flex items-center justify-center text-[#9AA0A6] hover:text-[#E8EAED] hover:bg-[#303134] transition-colors"
-                title="Next"
+                aria-label="Next workspace tip"
+                className="flex size-9 items-center justify-center rounded-lg text-[#9AA0A6] transition-colors hover:bg-[#303134] hover:text-[#E8EAED] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8]"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="size-5" />
               </button>
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="pt-1">
+        <MeetingTypeList />
       </div>
     </section>
   );

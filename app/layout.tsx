@@ -37,9 +37,9 @@ export default function RootLayout({
           },
           variables: {
             colorText: "#F8FAFC",
-            colorPrimary: "#00D2D3",
-            colorBackground: "#111622",
-            colorInputBackground: "#171E2D",
+            colorPrimary: "#8AB4F8",
+            colorBackground: "#1A1B1E",
+            colorInputBackground: "#202124",
             colorInputText: "#F8FAFC",
             colorTextSecondary: "#94A3B8",
             borderRadius: "0.75rem",
@@ -47,7 +47,7 @@ export default function RootLayout({
         }}
       >
         <body
-          className={`${plusJakartaSans.variable} font-sans antialiased bg-dark-1 text-slate-100 min-h-screen selection:bg-brand-cyan/20 selection:text-brand-cyan`}
+          className={`${plusJakartaSans.variable} antialiased bg-dark-1 text-slate-100 min-h-screen selection:bg-[#8AB4F8]/20 selection:text-[#AECBFA]`}
         >
           {children}
           <Toaster />
