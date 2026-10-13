@@ -22,7 +22,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 flex h-[72px] items-center justify-between border-b border-[#3C4043] bg-[#1A1B1E] px-4 md:px-7">
+    <header className="dashboard-navbar fixed inset-x-0 top-0 z-50 flex h-[72px] items-center justify-between border-b border-[#3C4043] bg-[#1A1B1E] px-4 md:px-7">
       <div className="flex items-center gap-4">
         <BaithakLogo size={32} textClassName="text-xl font-medium" />
       </div>

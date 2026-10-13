@@ -40,6 +40,8 @@ const Sidebar = () => {
             <Link
               href={link.route}
               key={link.label}
+              aria-label={link.label}
+              title={link.label}
               className={cn(
                 "flex items-center gap-3 rounded-xl border px-3 py-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AB4F8] max-lg:justify-center",
                 isActive

@@ -147,7 +147,7 @@ const MeetingRoom = () => {
   if (callingState !== CallingState.JOINED) return <Loader />;
 
   const isAdmissionMeeting = currentCall?.type === "baithak" || currentCall?.type === "default";
-  const visibleParticipantCount = Math.max(1, Math.min(participantCount, 16));
+  const participantLayout = participantCount > 16 ? "many" : String(Math.max(1, participantCount));
 
   return (
     <section className="meeting-room relative flex h-dvh w-full select-none flex-col overflow-hidden bg-[#0F1115] text-[#E8EAED]">
@@ -204,7 +204,7 @@ const MeetingRoom = () => {
         <div
           className="meeting-stage relative flex size-full min-h-0 items-center justify-center overflow-hidden rounded-2xl border border-white/[0.08] bg-[#171A20] shadow-[0_18px_60px_rgba(0,0,0,0.28)]"
           data-layout={layout}
-          data-participants={visibleParticipantCount}
+          data-participants={participantLayout}
         >
           <MeetingCallLayout layout={layout} />
 

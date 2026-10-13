@@ -33,7 +33,7 @@ const MeetingModal = ({
 }: MeetingModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="flex w-full max-w-[480px] flex-col gap-6 border border-[#3C4043] bg-[#28292C] px-6 py-8 text-[#E8EAED] rounded-2xl shadow-2xl">
+      <DialogContent className="flex max-h-[calc(100dvh-2rem)] w-[calc(100%-1.5rem)] max-w-[480px] flex-col gap-6 overflow-y-auto rounded-2xl border border-[#3C4043] bg-[#28292C] px-4 py-6 text-[#E8EAED] shadow-2xl sm:w-[calc(100%-2rem)] sm:px-6 sm:py-8">
         <DialogTitle className="sr-only">{title}</DialogTitle>
         <div className="flex flex-col gap-5">
           {image && (
@@ -47,16 +47,16 @@ const MeetingModal = ({
           
           {children}
 
-          <div className="flex justify-end gap-3 pt-2">
+          <div className="flex flex-col-reverse justify-end gap-2 pt-2 sm:flex-row sm:gap-3">
             <Button
               variant="ghost"
-              className="rounded-full text-[#9AA0A6] hover:text-[#E8EAED] hover:bg-[#303134]"
+              className="w-full rounded-full text-[#9AA0A6] hover:bg-[#303134] hover:text-[#E8EAED] sm:w-auto"
               onClick={onClose}
             >
               Cancel
             </Button>
             <Button
-              className="rounded-full bg-[#1A73E8] hover:bg-[#1557B0] text-white px-6 font-medium"
+              className="w-full rounded-full bg-[#1A73E8] px-6 font-medium text-white hover:bg-[#1557B0] sm:w-auto"
               onClick={handleClick}
             >
               {buttonIcon && (

@@ -17,7 +17,7 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
       <Navbar />
       <div className="flex">
         <Sidebar />
-        <section className="flex min-h-screen min-w-0 flex-1 flex-col px-4 pb-12 pt-24 max-md:pb-14 sm:px-8 lg:px-12">
+        <section className="dashboard-content flex min-h-screen min-w-0 flex-1 flex-col px-4 pb-12 pt-24 max-md:pb-14 sm:px-8 lg:px-12">
           <div className="mx-auto w-full max-w-[1440px]">{children}</div>
         </section>
       </div>

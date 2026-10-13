@@ -42,7 +42,7 @@ const MobileNav = () => {
         </SheetTrigger>
         <SheetContent
           side="left"
-          className="border-r border-[#3C4043] bg-[#1A1B1E] p-5 text-[#E8EAED] sm:p-6"
+          className="mobile-nav-sheet border-r border-[#3C4043] bg-[#1A1B1E] p-5 text-[#E8EAED] sm:p-6"
           aria-describedby={undefined}
         >
           <VisuallyHidden>
@@ -53,7 +53,7 @@ const MobileNav = () => {
             <BaithakLogo size={32} textClassName="text-xl font-normal" />
           </div>
 
-          <div className="flex h-[calc(100vh-100px)] flex-col justify-between pt-6 overflow-y-auto">
+           <div className="flex h-[calc(100dvh-100px)] flex-col justify-between overflow-y-auto pt-6">
              <section className="flex flex-col gap-1.5">
               {sidebarLinks.map((item) => {
                 const isActive =

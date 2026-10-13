@@ -166,7 +166,7 @@ const MeetingSetup = ({ setIsSetupComplete }: MeetingSetupProps) => {
       : "Ask to join this meeting";
 
     return (
-      <main className="flex min-h-dvh w-full flex-col bg-[#101216] px-4 py-5 text-[#E8EAED] sm:px-6 sm:py-8">
+      <main className="prejoin-waiting flex min-h-dvh w-full flex-col bg-[#101216] px-4 py-5 text-[#E8EAED] sm:px-6 sm:py-8">
         <header className="mx-auto flex w-full max-w-6xl items-center justify-between">
           <BaithakLogo size={30} textClassName="text-lg" />
           <span className="hidden items-center gap-2 text-xs text-[#8B909A] sm:flex">
@@ -225,7 +225,7 @@ const MeetingSetup = ({ setIsSetupComplete }: MeetingSetupProps) => {
   }
 
   return (
-    <div className="min-h-dvh w-full bg-[#101216] text-[#E8EAED]">
+    <div className="prejoin-room min-h-dvh w-full bg-[#101216] text-[#E8EAED]">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
         <BaithakLogo size={30} textClassName="text-lg" />
         <div className="flex items-center gap-2 text-xs text-[#8B909A]">
@@ -235,11 +235,11 @@ const MeetingSetup = ({ setIsSetupComplete }: MeetingSetupProps) => {
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-6xl items-center px-4 pb-10 pt-8 sm:px-6 sm:pb-16 sm:pt-12 lg:px-8">
+      <main className="prejoin-room__main mx-auto flex w-full max-w-6xl items-center px-4 pb-10 pt-8 sm:px-6 sm:pb-16 sm:pt-12 lg:px-8">
         <div className="grid w-full items-start gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(19rem,0.75fr)] lg:gap-8">
           <section aria-labelledby="prejoin-title" className="min-w-0">
-            <div className="overflow-hidden rounded-[1.75rem] border border-white/[0.09] bg-[#181b22] p-2 shadow-2xl shadow-black/30 sm:p-3">
-              <div className="relative aspect-video overflow-hidden rounded-[1.35rem] border border-white/[0.06] bg-[#0d0f13]">
+            <div className="prejoin-room__preview-card overflow-hidden rounded-[1.75rem] border border-white/[0.09] bg-[#181b22] p-2 shadow-2xl shadow-black/30 sm:p-3">
+              <div className="prejoin-room__preview relative aspect-video overflow-hidden rounded-[1.35rem] border border-white/[0.06] bg-[#0d0f13]">
                 <VideoPreview className="h-full w-full" />
 
                 {cameraState.optimisticStatus === "disabled" && (
@@ -294,7 +294,7 @@ const MeetingSetup = ({ setIsSetupComplete }: MeetingSetupProps) => {
             </div>
           </section>
 
-          <section className="min-w-0 rounded-[1.75rem] border border-white/[0.09] bg-[#181b22] p-5 shadow-2xl shadow-black/20 sm:p-7" aria-labelledby="prejoin-title">
+          <section className="prejoin-room__details-card min-w-0 rounded-[1.75rem] border border-white/[0.09] bg-[#181b22] p-5 shadow-2xl shadow-black/20 sm:p-7" aria-labelledby="prejoin-title">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8B909A]">You’re almost in</p>

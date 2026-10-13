@@ -262,10 +262,10 @@ const MeetingChat = ({ isOpen, onClose, onUnreadChange }: MeetingChatProps) => {
                     )}
                   </div>
                 )}
-                <div className={cn("max-w-[82%]", isOwnMessage && "items-end")}> 
-                  <div className={cn("mb-1 flex items-center gap-2 text-[10px] text-[#7F8794]", isOwnMessage && "justify-end")}>
-                    <span>{isOwnMessage ? "You" : message.senderName}</span>
-                    <span>{formatMessageTime(message.createdAt)}</span>
+                <div className={cn("min-w-0 max-w-[82%]", isOwnMessage && "items-end")}>
+                  <div className={cn("meeting-chat__sender mb-1 flex items-center gap-2 text-[10px] text-[#7F8794]", isOwnMessage && "justify-end")}>
+                    <span className="meeting-chat__sender-name">{isOwnMessage ? "You" : message.senderName}</span>
+                    <span className="meeting-chat__sender-time">{formatMessageTime(message.createdAt)}</span>
                   </div>
                   <div
                     className={cn(
@@ -305,7 +305,7 @@ const MeetingChat = ({ isOpen, onClose, onUnreadChange }: MeetingChatProps) => {
               className="max-h-28 min-h-12 w-full resize-none bg-transparent px-2 py-1 text-sm leading-5 text-[#F1F3F4] outline-none placeholder:text-[#747984]"
             />
             <div className="flex items-center justify-between gap-3 px-1 pt-1">
-              <span className="text-[10px] text-[#747984]">Enter to send · Shift + Enter for a new line</span>
+              <span className="meeting-chat__hint text-[10px] text-[#747984]">Enter to send · Shift + Enter for a new line</span>
               <button
                 type="submit"
                 disabled={!draft.trim() || isSending || !call}
