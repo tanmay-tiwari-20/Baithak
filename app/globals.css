@@ -1207,6 +1207,12 @@ body {
   }
 }
 
+@media (max-width: 639px) {
+  .mobile-tab-bar {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
 /* When Stream moves to a second page, the total call size no longer tells us
    how many tiles are visible. Use the rendered group itself for that case. */
 .meeting-stage[data-layout="grid"][data-participants="many"] .str-video__paginated-grid-layout__group {

@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/toaster";
+import PwaRegister from "@/components/PwaRegister";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -18,14 +19,16 @@ export const metadata: Metadata = {
     "Enterprise-grade, crystal-clear video calling and collaborative meetings inspired by Google Meet with real-time screen sharing, recording, and scheduling.",
   icons: {
     icon: "/icons/logo.svg",
-    apple: "/icons/logo.svg",
+    apple: "/icons/apple-touch-icon.png",
   },
+  manifest: "/manifest.webmanifest",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: "#1A1B1E",
 };
 
 export default function RootLayout({
@@ -57,6 +60,7 @@ export default function RootLayout({
         >
           {children}
           <Toaster />
+          <PwaRegister />
         </body>
       </ClerkProvider>
     </html>

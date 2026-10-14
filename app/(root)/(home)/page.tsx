@@ -37,13 +37,13 @@ const Home = () => {
   };
 
   return (
-    <section className="mx-auto flex max-w-7xl flex-col gap-8 py-2 text-[#E8EAED]">
-      <div className="grid grid-cols-1 gap-8 border-b border-[#3C4043] pb-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center lg:gap-12">
+    <section className="mx-auto flex max-w-7xl flex-col gap-6 py-1 text-[#E8EAED] sm:gap-8 sm:py-2">
+      <div className="grid grid-cols-1 gap-6 border-b border-[#3C4043] pb-7 sm:gap-8 sm:pb-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center lg:gap-12">
         <div className="space-y-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#AECBFA]">
             Baithak workspace
           </p>
-          <h1 className="max-w-2xl text-4xl font-medium leading-tight tracking-[-0.03em] text-[#E8EAED] sm:text-5xl">
+          <h1 className="max-w-2xl text-[2rem] font-medium leading-[1.12] tracking-[-0.03em] text-[#E8EAED] sm:text-5xl">
             Video calls and meetings <span className="text-[#8AB4F8]">for everyone</span>
           </h1>
           <p className="max-w-xl text-base leading-7 text-[#9AA0A6] sm:text-lg">
@@ -51,7 +51,7 @@ const Home = () => {
           </p>
         </div>
 
-        <div className="flex min-h-[320px] flex-col items-center justify-center rounded-2xl border border-[#3C4043] bg-[#202124] p-6 sm:p-8">
+        <div className="flex min-h-[260px] flex-col items-center justify-center rounded-2xl border border-[#3C4043] bg-[#202124] p-5 sm:min-h-[320px] sm:p-8">
           <div className="flex w-full max-w-sm flex-col items-center space-y-6 text-center">
             <div className="flex size-32 items-center justify-center rounded-full border border-[#3C4043] bg-[#28292C] sm:size-36">
               {carouselItems[slide].icon}
@@ -104,7 +104,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="pt-1">
+      <div className="pt-0.5 sm:pt-1">
         <MeetingTypeList />
       </div>
     </section>
